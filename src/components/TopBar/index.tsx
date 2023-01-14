@@ -8,7 +8,7 @@ import _ from "lodash";
 import clsx from "clsx";
 import { Transition } from "@headlessui/react";
 import Modal from '../Modal';
-import { useAppDispatch, useAppSelector } from "../../stores/hooks";
+import { useAppDispatch } from "../../stores/hooks";
 import {logout, reset} from '../../stores/auth/authSlice';
 
 function Main() {

@@ -7,11 +7,10 @@ import { FormInput, FormCheck } from "../../base-components/Form";
 import Button from "../../base-components/Button";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
-
 //REDUX
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "../../stores/hooks";
 import { login, reset } from "../../stores/auth/authSlice";
-import type {  AppDispatch } from '../../stores/store'
+
 
 function Main() {
   type FormData = {
@@ -19,19 +18,24 @@ function Main() {
     password: string;
   };
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const [formData, setFormData] = useState<FormData>({ email: "", password: "" });
-  const { user, isLoading, isError, isSuccess, message } = useSelector((state: any) => state.auth);
-  
+  const [formData, setFormData] = useState<FormData>({
+    email: "",
+    password: "",
+  });
+  const { user, isLoading, isError, isSuccess, message } = useAppSelector(
+    (state: any) => state.auth
+  );
+
   useEffect(() => {
     if (isError) {
       return;
     }
-
-    console.log(user, isLoading, isError, isSuccess, message)
-
-    if (isSuccess || (typeof user === "object" && Object.keys(user).length !== 0)) {
+    if (
+      isSuccess ||
+      (typeof user === "object" && Object.keys(user).length !== 0)
+    ) {
       navigate("/");
     }
 
@@ -47,7 +51,7 @@ function Main() {
     try {
       dispatch(login(formData));
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -91,7 +95,12 @@ function Main() {
             </div>
             {/* END: Login Info */}
             {/* BEGIN: Login Form */}
-            <form onSubmit={handleSubmit} className={`flex h-screen py-5 my-10 xl:h-auto xl:py-0 xl:my-0 ${isLoading && 'pointer-events-none opacity-40'}`}>
+            <form
+              onSubmit={handleSubmit}
+              className={`flex h-screen py-5 my-10 xl:h-auto xl:py-0 xl:my-0 ${
+                isLoading && "pointer-events-none opacity-40"
+              }`}
+            >
               <div className="w-full px-5 py-8 mx-auto my-auto bg-white rounded-md shadow-md xl:ml-20 dark:bg-darkmode-600 xl:bg-transparent sm:px-8 xl:p-0 xl:shadow-none sm:w-3/4 lg:w-2/4 xl:w-auto">
                 <h2 className="text-2xl font-bold text-center intro-x xl:text-3xl xl:text-left">
                   Sign In
@@ -104,7 +113,9 @@ function Main() {
                   {isError && <p className="text-red-500 mb-3">{message}</p>}
                   <FormInput
                     type="text"
-                    className={`block px-4 py-3 intro-x login__input min-w-full xl:min-w-[350px] ${isError && ' border-red-500 '}}`}
+                    className={`block px-4 py-3 intro-x login__input min-w-full xl:min-w-[350px] ${
+                      isError && " border-red-500 "
+                    }}`}
                     placeholder="Email"
                     name="email"
                     value={formData.email}
@@ -115,7 +126,9 @@ function Main() {
                     onChange={handleChange}
                     type="password"
                     name="password"
-                    className={`block px-4 py-3 mt-4 intro-x login__input min-w-full xl:min-w-[350px] ${isError && ' border-red-500 '}}`}
+                    className={`block px-4 py-3 mt-4 intro-x login__input min-w-full xl:min-w-[350px] ${
+                      isError && " border-red-500 "
+                    }}`}
                     placeholder="Password"
                   />
                 </div>

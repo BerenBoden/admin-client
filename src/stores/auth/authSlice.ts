@@ -1,16 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
 import type { RootState } from "../store";
-import { Cookies } from 'react-cookie';
+import { Cookies } from "react-cookie";
 
 // Get user from cookies.
 const cookies = new Cookies();
-const user = cookies.get('user');
+const user = cookies.get("user");
 
 type FormData = {
   email: string;
   password: string;
 };
+
 const initialState = {
   user: user ? user : {},
   isError: false,
@@ -92,7 +93,7 @@ export const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = (action.payload as unknown) as string;
+        state.message = action.payload as unknown as string;
         state.user = action.payload;
       })
       .addCase(login.rejected, (state, action) => {
@@ -103,10 +104,9 @@ export const authSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = {};
-      });
+      })
   },
 });
 
 export const { reset } = authSlice.actions;
 export default authSlice.reducer;
- 

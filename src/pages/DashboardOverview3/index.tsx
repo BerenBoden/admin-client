@@ -28,13 +28,12 @@ function Main() {
   );
   useEffect(() => {
     if (isError) {
-      console.log(message);
+      navigate("/login");
     }
 
     if (typeof user === "object" && Object.keys(user).length === 0) {
       navigate("/login");
     }
-    console.log(user);
     return () => {
       dispatch(reset());
     };

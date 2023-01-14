@@ -1,6 +1,6 @@
 import _ from "lodash";
 import clsx from "clsx";
-import { useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import fakerData from "../../utils/faker";
 import Button from "../../base-components/Button";
 import { FormInput, FormLabel, FormSwitch } from "../../base-components/Form";
@@ -10,61 +10,111 @@ import Litepicker from "../../base-components/Litepicker";
 import TomSelect from "../../base-components/TomSelect";
 import { ClassicEditor } from "../../base-components/Ckeditor";
 import { Menu, Tab } from "../../base-components/Headless";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from "../../stores/hooks";
+import { reset } from "../../stores/auth/authSlice";
+import { mapObjectToId, slugify } from "../../utils/helper";
+import jwtinterceptor from "../../utils/refreshToken";
+import { Cookies } from "react-cookie";
+import { useQuery } from "@tanstack/react-query";
+import { getTagsAndCategories } from '../../utils/api'
 
 function Main() {
-  const [categories, setCategories] = useState(["1", "2"]);
-  const [tags, setTags] = useState(["1", "2"]);
+  const cookies = new Cookies();
+  const [categories, setCategories] = useState([""]);
+  const [tags, setTags] = useState([""]);
+  const [title, setTitle] = useState<any>("");
   const [salesReportFilter, setSalesReportFilter] = useState<string>();
-  const [editorData, setEditorData] = useState("<p>Content of the editor.</p>");
+  const [editorData, setEditorData] = useState("");
+  const [image, setImage] = useState();
+  const [imageHeader, setImageHeader] = useState<any>();
+  const { user, message } = useAppSelector((state: any) => state.auth);
+
+
+  const { data: categoriesData } = useQuery(["categories"], () => getTagsAndCategories('blog', 'categories'))
+  const { data: tagsData  } = useQuery(["tags"], () => getTagsAndCategories('blog', 'tags'));
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (typeof user === "object" && Object.keys(user).length === 0) {
+      navigate("/login");
+    }
+    return () => {
+      dispatch(reset());
+    };
+  }, [user, navigate, message, dispatch]);
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setImageHeader(event.target.files[0]);
+      const file: Blob = new Blob([event.target.files[0]], {
+        type: event.target.files[0].type,
+      });
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event: any) => {
+          setImage(event.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  const handleContentSubmit = async (event: React.UIEvent) => {
+    try {
+      event.preventDefault();
+      const data = {
+        title,
+        content: editorData,
+        slug: slugify(title),
+        blog_categories: mapObjectToId(categories),
+        blog_tags: mapObjectToId(tags),
+      };
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(data));
+      if (imageHeader) {
+        formData.append("files.image_header", imageHeader);
+      }
+      jwtinterceptor.post(
+        `${import.meta.env.VITE_STRAPI_API}/api/blogs`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${cookies.get("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
       <div className="flex flex-col items-center mt-8 intro-y sm:flex-row">
         <h2 className="mr-auto text-lg font-medium">Add New Post</h2>
         <div className="flex w-full mt-4 sm:w-auto sm:mt-0">
-          <Menu className="mr-2">
-            <Menu.Button as={Button} className="flex items-center !box">
-              English <Lucide icon="ChevronDown" className="w-4 h-4 ml-2" />
-            </Menu.Button>
-            <Menu.Items className="w-40">
-              <Menu.Item>
-                <Lucide icon="Activity" className="w-4 h-4 mr-2" />
-                <span className="truncate">English</span>
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="Activity" className="w-4 h-4 mr-2" />
-                <span className="truncate">Indonesian</span>
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
-          <Button
-            type="button"
-            className="flex items-center ml-auto mr-2 !box sm:ml-0"
-          >
-            <Lucide icon="Eye" className="w-4 h-4 mr-2" /> Preview
-          </Button>
           <Menu>
             <Menu.Button
               as={Button}
+              type="submit"
               variant="primary"
               className="flex items-center shadow-md"
             >
-              Save <Lucide icon="ChevronDown" className="w-4 h-4 ml-2" />
+              Save <Lucide icon="ChevronDown" className="w-8 h-4 ml-2" />
             </Menu.Button>
             <Menu.Items className="w-40">
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> As New Post
+              <Menu.Item onClick={handleContentSubmit}>
+                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Save &
+                Publish
               </Menu.Item>
               <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> As Draft
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                PDF
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                Word
+                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Save as
+                Draft
               </Menu.Item>
             </Menu.Items>
           </Menu>
@@ -77,6 +127,8 @@ function Main() {
             type="text"
             className="px-4 py-3 pr-10 intro-y !box"
             placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
           <Tab.Group className="mt-5 overflow-hidden intro-y box">
             <Tab.List className="flex-col border-transparent dark:border-transparent sm:flex-row bg-slate-200 dark:bg-darkmode-800">
@@ -182,25 +234,7 @@ function Main() {
                       <FormLabel>Upload Image</FormLabel>
                       <div className="pt-4 border-2 border-dashed rounded-md dark:border-darkmode-400">
                         <div className="flex flex-wrap px-4">
-                          {_.take(fakerData, 4).map((faker, fakerKey) => (
-                            <div
-                              key={fakerKey}
-                              className="relative w-24 h-24 mb-5 mr-5 cursor-pointer image-fit zoom-in"
-                            >
-                              <img
-                                className="rounded-md"
-                                alt="Midone Tailwind HTML Admin Template"
-                                src={faker.images[0]}
-                              />
-                              <Tippy
-                                as="div"
-                                content="Remove this image?"
-                                className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 -mt-2 -mr-2 text-white rounded-full bg-danger"
-                              >
-                                <Lucide icon="X" className="w-4 h-4" />
-                              </Tippy>
-                            </div>
-                          ))}
+                          {image && <img src={image} alt="Uploaded Image" />}
                         </div>
                         <div className="relative flex items-center px-4 pb-4 cursor-pointer">
                           <Lucide icon="Image" className="w-4 h-4 mr-2" />
@@ -209,6 +243,7 @@ function Main() {
                           </span>{" "}
                           or drag and drop
                           <FormInput
+                            onChange={handleImageChange}
                             type="file"
                             className="absolute top-0 left-0 w-full h-full opacity-0"
                           />
@@ -286,11 +321,11 @@ function Main() {
                 className="w-full"
                 multiple
               >
-                <option value="1">Horror</option>
-                <option value="2">Sci-fi</option>
-                <option value="3">Action</option>
-                <option value="4">Drama</option>
-                <option value="5">Comedy</option>
+                {categoriesData && categoriesData.data.map((el: any) => (
+                  <option value={el.id}>
+                    {el.attributes.name}
+                  </option>
+                ))}
               </TomSelect>
             </div>
             <div className="mt-3">
@@ -302,11 +337,11 @@ function Main() {
                 className="w-full"
                 multiple
               >
-                <option value="1">Leonardo DiCaprio</option>
-                <option value="2">Johnny Deep</option>
-                <option value="3">Robert Downey, Jr</option>
-                <option value="4">Samuel L. Jackson</option>
-                <option value="5">Morgan Freeman</option>
+                {tagsData && tagsData.data.map((el: any) => (
+                  <option value={el.id}>
+                    {el.attributes.name}
+                  </option>
+                ))}
               </TomSelect>
             </div>
             <FormSwitch className="flex flex-col items-start mt-3">

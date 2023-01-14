@@ -199,6 +199,12 @@ const slideDown = (
   }, duration);
 };
 
+function slugify(value: string) {
+  return value == undefined ? '' : value.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+}
+
+const mapObjectToId = (data: any[]): {id: number}[] => data.map((id) => ({id: parseInt(id)}));
+
 export {
   cutText,
   formatDate,
@@ -214,4 +220,6 @@ export {
   stringToHTML,
   slideUp,
   slideDown,
+  slugify,
+  mapObjectToId
 };

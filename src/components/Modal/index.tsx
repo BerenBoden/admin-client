@@ -19,8 +19,8 @@ function Main({onClose, children, actionBar}: ModalProps) {
 
   return ReactDOM.createPortal(
     <div>
-      <div onClick={onClose} className="fixed inset-0 bg-gray-300 opacity-70 z-40"></div>
-      <div className="fixed inset-80 p-10 bg-white z-50">
+      <div onClick={onClose} className="fixed inset-0 bg-gray-300 opacity-70 z-50"></div>
+      <div className="fixed inset-80 p-10 bg-white z-[51]">
         <p>{children}</p>
         <div>{actionBar}</div>
       </div>

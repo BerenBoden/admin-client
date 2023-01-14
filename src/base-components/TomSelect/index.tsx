@@ -40,7 +40,7 @@ function TomSelect(props: TomSelectProps) {
     if (Array.isArray(props.value)) {
       options = {
         persist: false,
-        create: true,
+        create: false,
         onDelete: function (values: string[]) {
           return confirm(
             values.length > 1

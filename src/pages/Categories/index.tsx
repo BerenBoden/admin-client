@@ -1,6 +1,6 @@
 import _ from "lodash";
 import clsx from "clsx";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import fakerData from "../../utils/faker";
 import Button from "../../base-components/Button";
 import Pagination from "../../base-components/Pagination";
@@ -9,10 +9,26 @@ import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 function Main() {
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
   const deleteButtonRef = useRef(null);
+
+  const { data, status, isLoading } = useQuery(["categories"], async () => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_STRAPI_API}/api/blog-categories`
+    );
+    return response.data;
+  });
+  useEffect(() => {
+    if (data) {
+      console.log(data, status);
+    }
+  }, [data]);
+  if (isLoading)
+    return <h2 className="mt-10 text-lg font-medium intro-y">Loading...</h2>;
 
   return (
     <>
@@ -22,26 +38,6 @@ function Main() {
           <Button variant="primary" className="mr-2 shadow-md">
             Add New Category
           </Button>
-          <Menu>
-            <Menu.Button as={Button} className="px-2 !box">
-              <span className="flex items-center justify-center w-5 h-5">
-                <Lucide icon="Plus" className="w-4 h-4" />
-              </span>
-            </Menu.Button>
-            <Menu.Items className="w-40">
-              <Menu.Item>
-                <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                Excel
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                PDF
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
           <div className="hidden mx-auto md:block text-slate-500">
             Showing 1 to 10 of 150 entries
           </div>
@@ -82,45 +78,48 @@ function Main() {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {_.take(fakerData, 9).map((faker, fakerKey) => (
-                <Table.Tr key={fakerKey} className="intro-x">
+              {data.data.map((item: any, index: number) => (
+                <>
+                {console.log(item.id)}
+                <Table.Tr key={item.id} className="intro-x">
                   <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div className="flex">
                       <div className="w-10 h-10 image-fit zoom-in">
-                        <Tippy
+                        {/* <Tippy
                           as="img"
                           alt="Midone Tailwind HTML Admin Template"
                           className="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                          src={faker.images[0]}
-                          content={`Uploaded at ${faker.dates[0]}`}
-                        />
+                          // src={item}
+                          // content={`Uploaded at ${item}`}
+                        /> */}
+                        
                       </div>
                       <div className="w-10 h-10 -ml-5 image-fit zoom-in">
-                        <Tippy
+                        {/* <Tippy
                           as="img"
                           alt="Midone Tailwind HTML Admin Template"
                           className="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                          src={faker.images[1]}
-                          content={`Uploaded at ${faker.dates[1]}`}
-                        />
+                          // src={item}
+                          // content={`Uploaded at ${item}`}
+                        /> */}
                       </div>
                       <div className="w-10 h-10 -ml-5 image-fit zoom-in">
-                        <Tippy
+                        {/* <Tippy
                           as="img"
                           alt="Midone Tailwind HTML Admin Template"
                           className="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                          src={faker.images[2]}
-                          content={`Uploaded at ${faker.dates[2]}`}
-                        />
+                          // src={item.images[2]}
+                          // content={`Uploaded at ${item.dates[2]}`}
+                        /> */}
                       </div>
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <a href="" className="font-medium whitespace-nowrap">
-                      {faker.categories[0].name}
+                      {item.attributes.name}
                     </a>
                     <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                      Tags: {faker.categories[0].tags}
+                      {/* Tags: {item.categories[0].tags} */}
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -129,19 +128,19 @@ function Main() {
                       href="#"
                     >
                       <Lucide icon="ExternalLink" className="w-4 h-4 mr-2" />
-                      /categories/{faker.categories[0].slug}
+                      /blog/categories/{item.attributes.name}
                     </a>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div
                       className={clsx([
                         "flex items-center justify-center",
-                        { "text-success": faker.trueFalse[0] },
-                        { "text-danger": !faker.trueFalse[0] },
+                        // { "text-success": faker.trueFalse[0] },
+                        // { "text-danger": !faker.trueFalse[0] },
                       ])}
                     >
                       <Lucide icon="CheckSquare" className="w-4 h-4 mr-2" />
-                      {faker.trueFalse[0] ? "Active" : "Inactive"}
+                      {/* {faker.trueFalse[0] ? "Active" : "Inactive"} */}
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
@@ -163,8 +162,10 @@ function Main() {
                     </div>
                   </Table.Td>
                 </Table.Tr>
+                </>
               ))}
             </Table.Tbody>
+            
           </Table>
         </div>
         {/* END: Data List */}

@@ -3,17 +3,7 @@ import Litepicker from "litepicker";
 import { LitepickerElement, LitepickerProps } from "./index";
 
 interface Picker extends Litepicker {
-  on?: (
-    event: string,
-    cb: (
-      startDate: {
-        dateInstance: Date;
-      },
-      endDate: {
-        dateInstance: Date;
-      }
-    ) => void
-  ) => {};
+  on(eventName: string | symbol, listener: (...args: any[]) => void): this;
 }
 
 const getDateFormat = (format: string | undefined) => {

@@ -1,15 +1,15 @@
 import axios from "axios";
 import { Cookies } from "react-cookie";
 
-const API_URL = "http://localhost:5000/api/authentication/";
-
 type FormData = {
   email: string;
   password: string;
 };
+const cookies = new Cookies();
+
 // Register user
 const register = async (userData: any): Promise<any> => {
-  const response = await axios.post(API_URL, userData);
+  const response = await axios.post(import.meta.env.VITE_BACKEND_API, userData);
   const cookies = new Cookies();
 
   if (response.data) {
@@ -21,14 +21,19 @@ const register = async (userData: any): Promise<any> => {
 
 // Login user
 const login = async (formData: FormData): Promise<any> => {
-  const response = await axios.post(API_URL + "login", formData);
-  const cookies = new Cookies();
+  const response = await axios.post(import.meta.env.VITE_BACKEND_API + "login", formData, {
+    withCredentials: true
+  });
+  
+  const {token, refreshToken, ...user} = response.data; 
 
   if (response.data) {
-    cookies.set("user", JSON.stringify(response.data), { path: "/" });
+    cookies.set("user", JSON.stringify(user), { path: "/" });
+    cookies.set("token", JSON.stringify(token), { path: "/" });
+    cookies.set("refreshToken", JSON.stringify(refreshToken), { path: "/" });
   }
 
-  return response.data;
+  return user;
 };
 
 // Logout user
@@ -41,6 +46,7 @@ const authService = {
   register,
   logout,
   login,
+  // useRefreshToken
 };
 
 export default authService;
