@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../stores/hooks";
 import { login, reset } from "../../stores/auth/authSlice";
 
-
 function Main() {
   type FormData = {
     email: string;
@@ -29,30 +28,22 @@ function Main() {
   );
 
   useEffect(() => {
-    if (isError) {
-      return;
-    }
     if (
       isSuccess ||
       (typeof user === "object" && Object.keys(user).length !== 0)
     ) {
       navigate("/");
+      dispatch(reset());
     }
-
-    dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      dispatch(login(formData));
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(login(formData));
   };
 
   return (

@@ -64,7 +64,9 @@ function TomSelect(props: TomSelectProps) {
   }, [props.options]);
 
   useEffect(() => {
+    
     if (tomSelectRef.current) {
+      
       props.getRef(tomSelectRef.current);
 
       if (initialRender.current) {
@@ -84,9 +86,11 @@ function TomSelect(props: TomSelectProps) {
         classNames && clonedEl.setAttribute("data-initial-class", classNames);
 
         // Hide original element
+        
         tomSelectRef.current?.parentNode &&
           tomSelectRef.current?.parentNode.appendChild(clonedEl);
-        tomSelectRef.current.setAttribute("hidden", "true");
+        tomSelectRef.current.setAttribute("hidden", "false");
+
 
         // Initialize tom select
         setValue(clonedEl, props);

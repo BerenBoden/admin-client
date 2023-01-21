@@ -1,31 +1,52 @@
-import ReactDOM from "react-dom";
-import {useEffect,ReactElement} from "react";
+import { Dialog } from "../../base-components/Headless";
+import Button from "../../base-components/Button";
+import Lucide from "../../base-components/Lucide";
 
-type ModalProps = {
-  onClose: () => void;
-  children: string;
-  actionBar: ReactElement;
-  };
-
-function Main({onClose, children, actionBar}: ModalProps) {
-    useEffect(() => {
-        document.body.classList.add('overflow-hidden');
-        return () => {
-            document.body.classList.remove('overflow-hidden')
-        }
-    }, [])
-    const modalContainer = document.querySelector("#modal-container");
-    if (!modalContainer) return null;
-
-  return ReactDOM.createPortal(
-    <div>
-      <div onClick={onClose} className="fixed inset-0 bg-gray-300 opacity-70 z-50"></div>
-      <div className="fixed inset-80 p-10 bg-white z-[51]">
-        <p>{children}</p>
-        <div>{actionBar}</div>
-      </div>
-    </div>,
-    modalContainer
+function Main({
+  handleSubmit,
+  confirmationModal,
+  setConfirmationModal,
+  icon,
+  question,
+  information,
+  buttonText,
+  buttonType,
+}: any) {
+  return (
+    <Dialog
+      open={confirmationModal}
+      onClose={() => {
+        setConfirmationModal(!confirmationModal);
+      }}
+    >
+      <Dialog.Panel>
+        <div className="p-5 text-center">
+          <Lucide icon={icon} className="w-16 h-16 mx-auto mt-3 text-danger" />
+          <div className="mt-5 text-3xl">{question}</div>
+          <div className="mt-2 text-slate-500">{information}</div>
+        </div>
+        <div className="px-5 pb-8 text-center">
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => {
+              setConfirmationModal(!confirmationModal);
+            }}
+            className="w-24 mr-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant={buttonType}
+            type="button"
+            className="w-24"
+            onClick={handleSubmit}
+          >
+            {buttonText}
+          </Button>
+        </div>
+      </Dialog.Panel>
+    </Dialog>
   );
 }
 

@@ -1,10 +1,9 @@
-import { useRoutes } from "react-router-dom";
 import SideMenu from "../layouts/SideMenu";
 import DashboardOverview1 from "../pages/DashboardOverview1";
 import DashboardOverview2 from "../pages/DashboardOverview2";
 import DashboardOverview3 from "../pages/DashboardOverview3";
 import DashboardOverview4 from "../pages/DashboardOverview4";
-import Categories from "../pages/Categories";
+import Identifiers from "../pages/Identifiers";
 import AddProduct from "../pages/AddProduct";
 import ProductList from "../pages/ProductList";
 import ProductGrid from "../pages/ProductGrid";
@@ -69,6 +68,7 @@ import Validation from "../pages/Validation";
 import Chart from "../pages/Chart";
 import Slider from "../pages/Slider";
 import ImageZoom from "../pages/ImageZoom";
+import Protected from "../pages/Protected";
 
 function Router() {
   const routes = [
@@ -93,8 +93,20 @@ function Router() {
           element: <DashboardOverview4 />,
         },
         {
-          path: "categories",
-          element: <Categories />,
+          path: "product-categories",
+          element: <Identifiers content="product" identifiers={["categories"]} />,
+        },
+        {
+          path: "product-tags",
+          element: <Identifiers content="product" identifiers={["tags"]} />,
+        },
+        {
+          path: "blog-categories",
+          element: <Identifiers content="blog" identifiers={["categories"]} />,
+        },
+        {
+          path: "blog-tags",
+          element: <Identifiers content="blog" identifiers={["tags"]} />,
         },
         {
           path: "add-product",
@@ -145,8 +157,8 @@ function Router() {
           element: <Chat />,
         },
         {
-          path: "post",
-          element: <Post />,
+          path: "add-article",
+          element: <Post content="blog" identifiers={["categories", "tags"]} />,
         },
         {
           path: "calendar",
@@ -197,7 +209,7 @@ function Router() {
           element: <WizardLayout3 />,
         },
         {
-          path: "blog-layout-1",
+          path: "articles",
           element: <BlogLayout1 />,
         },
         {
@@ -360,7 +372,7 @@ function Router() {
     },
   ];
 
-  return useRoutes(routes);
+  return <Protected routes={routes}></Protected>;
 }
 
 export default Router;

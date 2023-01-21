@@ -1,50 +1,75 @@
 import _ from "lodash";
 import clsx from "clsx";
 import React, { useEffect, useState, ChangeEvent } from "react";
-import fakerData from "../../utils/faker";
+
 import Button from "../../base-components/Button";
 import { FormInput, FormLabel, FormSwitch } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import Litepicker from "../../base-components/Litepicker";
-import TomSelect from "../../base-components/TomSelect";
+
 import { ClassicEditor } from "../../base-components/Ckeditor";
 import { Menu, Tab } from "../../base-components/Headless";
-import { useNavigate } from "react-router-dom";
-import { useAppSelector, useAppDispatch } from "../../stores/hooks";
-import { reset } from "../../stores/auth/authSlice";
+import { useAppSelector } from "../../stores/hooks";
 import { mapObjectToId, slugify } from "../../utils/helper";
-import jwtinterceptor from "../../utils/refreshToken";
-import { Cookies } from "react-cookie";
-import { useQuery } from "@tanstack/react-query";
-import { getTagsAndCategories } from '../../utils/api'
+import Toastify from "toastify-js";
+import IdentifierSelector from '../../components/IdentifierSelector'
+import { useGetUsersQuery } from "../../stores/services/users/usersSlice";
+import { useAddPostMutation } from "../../stores/services/posts/postsSlice";
 
-function Main() {
-  const cookies = new Cookies();
+ 
+function Main({content, identifiers}: {content: string, identifiers: Array<any>}) {
+  const { user } = useAppSelector((state: any) => state.auth);
   const [categories, setCategories] = useState([""]);
   const [tags, setTags] = useState([""]);
   const [title, setTitle] = useState<any>("");
   const [salesReportFilter, setSalesReportFilter] = useState<string>();
+  const [author, setAuthor] = useState(user.username)
   const [editorData, setEditorData] = useState("");
   const [image, setImage] = useState();
   const [imageHeader, setImageHeader] = useState<any>();
-  const { user, message } = useAppSelector((state: any) => state.auth);
+  
 
+  const [addPost, { isLoading: addPostIsLoading, isSuccess, isError, error }] =
+    useAddPostMutation();
 
-  const { data: categoriesData } = useQuery(["categories"], () => getTagsAndCategories('blog', 'categories'))
-  const { data: tagsData  } = useQuery(["tags"], () => getTagsAndCategories('blog', 'tags'));
-
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { data: usersData, isLoading: getUsersIsLoading } = useGetUsersQuery('Users');
 
   useEffect(() => {
-    if (typeof user === "object" && Object.keys(user).length === 0) {
-      navigate("/login");
+    if (isSuccess) {
+      Toastify({
+        text: "Blog post added successfully!",
+        duration: 4000,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          padding: "10px",
+          background: "green",
+          color: "white",
+          width: "300px",
+        },
+      }).showToast();
     }
-    return () => {
-      dispatch(reset());
-    };
-  }, [user, navigate, message, dispatch]);
+    if (isError) {
+      Toastify({
+        text: "There was an error.",
+        duration: 4000,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          padding: "10px",
+          background: "#B91C1C",
+          color: "white",
+          width: "300px",
+        },
+      }).showToast();
+    }
+  }, [isSuccess, isError]);
+
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -74,24 +99,18 @@ function Main() {
       };
       const formData = new FormData();
       formData.append("data", JSON.stringify(data));
-      if (imageHeader) {
-        formData.append("files.image_header", imageHeader);
-      }
-      jwtinterceptor.post(
-        `${import.meta.env.VITE_STRAPI_API}/api/blogs`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${cookies.get("token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      
+      formData.append("image_header", imageHeader);
+      formData.append("Content-Type", "multipart/form-data");
+
+      addPost(formData);
     } catch (err) {
       console.log(err);
     }
   };
+
+  if (addPostIsLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -273,23 +292,23 @@ function Main() {
                     <img
                       className="rounded"
                       alt="Midone Tailwind HTML Admin Template"
-                      src={fakerData[0].photos[0]}
+                      src='#'
                     />
                   </div>
-                  <div className="truncate">{fakerData[0].users[0].name}</div>
+                  <div className="truncate">{author}</div>
                   <Lucide icon="ChevronDown" className="w-4 h-4 ml-auto" />
                 </Menu.Button>
                 <Menu.Items>
-                  {_.take(fakerData, 5).map((faker, fakerKey) => (
-                    <Menu.Item key={fakerKey}>
+                  {usersData && usersData.map((user: any) => (
+                    <Menu.Item key={user.id} onClick={() => setAuthor(user.username)}>
                       <div className="absolute w-6 h-6 mr-3 image-fit">
                         <img
                           className="rounded"
                           alt="Midone Tailwind HTML Admin Template"
-                          src={faker.photos[0]}
+                          src="#"
                         />
                       </div>
-                      <div className="pl-1 ml-8">{faker.users[0].name}</div>
+                      <div className="pl-1 ml-8">{user.username}</div>
                     </Menu.Item>
                   ))}
                 </Menu.Items>
@@ -312,7 +331,12 @@ function Main() {
                 }}
               />
             </div>
-            <div className="mt-3">
+            {identifiers.map((identifier: any) => {
+              return (
+                <IdentifierSelector identifier={identifier} content={content} setCategories={setCategories}/>
+              )
+            })}
+            {/* <div className="mt-3">
               <FormLabel htmlFor="post-form-3">Categories</FormLabel>
               <TomSelect
                 id="post-form-3"
@@ -321,11 +345,10 @@ function Main() {
                 className="w-full"
                 multiple
               >
-                {categoriesData && categoriesData.data.map((el: any) => (
-                  <option value={el.id}>
-                    {el.attributes.name}
-                  </option>
-                ))}
+                {categoriesData &&
+                  categoriesData.data.map((el: any) => (
+                    <option value={el.id}>{el.attributes.name}</option>
+                  ))}
               </TomSelect>
             </div>
             <div className="mt-3">
@@ -337,13 +360,12 @@ function Main() {
                 className="w-full"
                 multiple
               >
-                {tagsData && tagsData.data.map((el: any) => (
-                  <option value={el.id}>
-                    {el.attributes.name}
-                  </option>
-                ))}
+                {tagsData &&
+                  tagsData.data.map((el: any) => (
+                    <option value={el.id}>{el.attributes.name}</option>
+                  ))}
               </TomSelect>
-            </div>
+            </div> */}
             <FormSwitch className="flex flex-col items-start mt-3">
               <FormSwitch.Label htmlFor="post-form-5" className="mb-2 ml-0">
                 Published

@@ -205,6 +205,11 @@ function slugify(value: string) {
 
 const mapObjectToId = (data: any[]): {id: number}[] => data.map((id) => ({id: parseInt(id)}));
 
+function pagination (total: number, limit: number) {
+  const pages = Math.ceil(total / limit);
+  return pages
+}
+
 export {
   cutText,
   formatDate,
@@ -221,5 +226,6 @@ export {
   slideUp,
   slideDown,
   slugify,
-  mapObjectToId
+  mapObjectToId,
+  pagination
 };

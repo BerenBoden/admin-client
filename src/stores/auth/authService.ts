@@ -21,16 +21,16 @@ const register = async (userData: any): Promise<any> => {
 
 // Login user
 const login = async (formData: FormData): Promise<any> => {
-  const response = await axios.post(import.meta.env.VITE_BACKEND_API + "login", formData, {
-    withCredentials: true
-  });
-  
-  const {token, refreshToken, ...user} = response.data; 
+  const response = await axios.post(
+    `${import.meta.env.VITE_TESTBACKEND_API}/api/authentication/login`,
+    formData
+  );
+
+  const { token, ...user } = response.data;
 
   if (response.data) {
     cookies.set("user", JSON.stringify(user), { path: "/" });
     cookies.set("token", JSON.stringify(token), { path: "/" });
-    cookies.set("refreshToken", JSON.stringify(refreshToken), { path: "/" });
   }
 
   return user;
@@ -38,15 +38,14 @@ const login = async (formData: FormData): Promise<any> => {
 
 // Logout user
 const logout = () => {
-  const cookies = new Cookies();
   cookies.remove("user", { path: "/" });
+  cookies.remove("token", { path: "/" });
 };
 
 const authService = {
   register,
   logout,
   login,
-  // useRefreshToken
 };
 
 export default authService;

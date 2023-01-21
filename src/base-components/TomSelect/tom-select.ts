@@ -4,6 +4,7 @@ import TomSelect from "tom-select";
 import _ from "lodash";
 
 const setValue = (el: TomSelectElement, props: TomSelectProps) => {
+
   if (props.value.length) {
     if (Array.isArray(props.value)) {
       for (const value of props.value) {
@@ -11,7 +12,6 @@ const setValue = (el: TomSelectElement, props: TomSelectProps) => {
           (option) =>
             option instanceof HTMLOptionElement && option.value == value
         );
-
         if (
           selectedOption !== undefined &&
           selectedOption instanceof HTMLOptionElement
@@ -32,10 +32,12 @@ const init = (
   computedOptions: RecursivePartial<TomSettings>
 ) => {
   // On option add
+
   if (Array.isArray(props.value)) {
     computedOptions = {
       onOptionAdd: function (value: string | number) {
         // Add new option
+
         const newOption = document.createElement("option");
         newOption.value = value.toString();
         newOption.text = value.toString();
@@ -64,7 +66,11 @@ const getOptions = (
 ) => {
   if (options) {
     Array.from(options).forEach(function (optionEl) {
-      if (optionEl instanceof HTMLOptGroupElement) {
+      if (
+        optionEl instanceof HTMLOptGroupElement ||
+        optionEl instanceof HTMLDivElement
+      ) {
+        console.log(optionEl)
         getOptions(optionEl.children, tempOptions);
       } else {
         tempOptions.push(optionEl);
@@ -86,8 +92,12 @@ const updateValue = (
   for (const [optionKey, option] of Object.entries(
     clonedEl.TomSelect.options
   )) {
+    
     if (
       !getOptions(originalEl.children).filter((optionEl) => {
+        // console.log(originalEl)
+        // if (optionEl instanceof HTMLOptionElement) {
+        // }
         return (
           optionEl instanceof HTMLOptionElement &&
           optionEl.value === option.value
@@ -96,6 +106,7 @@ const updateValue = (
     ) {
       clonedEl.TomSelect.removeOption(option.value);
     }
+    
   }
 
   // Update classnames

@@ -27,33 +27,43 @@ const initialState: SideMenuState = {
       subMenu: [
         {
           icon: "Activity",
-          pathname: "/categories",
-          title: "Categories",
-        },
-        {
-          icon: "Activity",
           pathname: "/add-product",
           title: "Add Product",
         },
         {
           icon: "Activity",
-          pathname: "/product-list",
-          title: "View Products",
+          pathname: "/edit-products",
+          title: "Edit Products",
         },
         {
           icon: "Activity",
-          pathname: "/transaction-list",
-          title: "Transactions",
+          pathname: "/edit-product-categories",
+          title: "Edit Categories",
         },
         {
           icon: "Activity",
-          pathname: "/seller-list",
-          title: "Sellers",
+          pathname: "/edit-product-tags",
+          title: "Edit Tags",
         },
         {
           icon: "Activity",
-          pathname: "/reviews",
-          title: "Reviews",
+          pathname: "/view-transactions",
+          title: "View Transactions",
+        },
+        {
+          icon: "Activity",
+          pathname: "/edit-sellers",
+          title: "Edit Sellers",
+        },
+        {
+          icon: "Activity",
+          pathname: "/view-reviews",
+          title: "View Reviews",
+        },
+        {
+          icon: "Activity",
+          pathname: "/view-analytics",
+          title: "View Analytics",
         },
       ],
     },
@@ -63,13 +73,28 @@ const initialState: SideMenuState = {
       subMenu: [
         {
           icon: "Activity",
-          title: "View Articles",
-          pathname: "/blog-layout-1",
+          pathname: "/articles",
+          title: "Articles",
         },
         {
           icon: "Activity",
-          title: "Add Article",
-          pathname: "/post",
+          pathname: "/blog-categories",
+          title: "Categories",
+        },
+        {
+          icon: "Activity",
+          pathname: "/blog-tags",
+          title: "Tags",
+        },
+        {
+          icon: "Activity",
+          pathname: "/publishers",
+          title: "Publishers",
+        },
+        {
+          icon: "Activity",
+          pathname: "/analytics",
+          title: "Analytics",
         },
       ]
     },

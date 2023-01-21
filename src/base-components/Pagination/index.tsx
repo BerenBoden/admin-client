@@ -18,15 +18,15 @@ interface LinkProps
   active?: boolean;
 }
 
-Pagination.Link = ({ className, active, children }: LinkProps) => {
+Pagination.Link = ({ children, className, handleClick}: any) => {
+
   return (
-    <li className="flex-1 sm:flex-initial">
+    <li className="flex-1 sm:flex-initial" onClick={handleClick}>
       <Button
         as="a"
         className={twMerge([
           "min-w-0 sm:min-w-[40px] shadow-none font-normal flex items-center justify-center border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3",
-          active && "!box font-medium dark:bg-darkmode-400",
-          className,
+          className
         ])}
       >
         {children}

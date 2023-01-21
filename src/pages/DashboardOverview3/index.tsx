@@ -1,9 +1,4 @@
 import _ from "lodash";
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { login, reset } from "../../stores/auth/authSlice";
-import type { AppDispatch } from "../../stores/store";
-import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import fakerData from "../../utils/faker";
 import Button from "../../base-components/Button";
@@ -21,27 +16,6 @@ import { Menu, Tab } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
 
 function Main() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const { user, isLoading, isError, message } = useSelector(
-    (state: any) => state.auth
-  );
-  useEffect(() => {
-    if (isError) {
-      navigate("/login");
-    }
-
-    if (typeof user === "object" && Object.keys(user).length === 0) {
-      navigate("/login");
-    }
-    return () => {
-      dispatch(reset());
-    };
-  }, [user, navigate, isError, message, dispatch]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
   return (
     <>
       <div className="relative">

@@ -7,14 +7,15 @@ import fakerData from "../../utils/faker";
 import _ from "lodash";
 import clsx from "clsx";
 import { Transition } from "@headlessui/react";
-import Modal from '../Modal';
 import { useAppDispatch } from "../../stores/hooks";
-import {logout, reset} from '../../stores/auth/authSlice';
+import { logout, reset } from "../../stores/auth/authSlice";
+import Modal from "../Modal";
 
 function Main() {
-  const [showModal, setShowModal] = useState(false);
+  const [confirmationModal, setConfirmationModal] = useState(false);
+
   const [searchDropdown, setSearchDropdown] = useState(false);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const showSearchDropdown = () => {
     setSearchDropdown(true);
@@ -23,17 +24,15 @@ function Main() {
     setSearchDropdown(false);
   };
 
-  const handleModal = () => {
-    setShowModal(!showModal);
+  const openModal = () => {
+    setConfirmationModal(!confirmationModal);
   };
-  const handleClose = () => {
-    setShowModal(false);
-  };
-  
+
   const handleLogout = () => {
-    dispatch(logout())
-    dispatch(reset())
-  }
+    dispatch(logout());
+    dispatch(reset());
+    setConfirmationModal(false);
+  };
 
   return (
     <>
@@ -215,13 +214,13 @@ function Main() {
               <Lucide icon="HelpCircle" className="w-4 h-4 mr-2" /> Help
             </Menu.Item>
             <Menu.Divider className="bg-white/[0.08]" />
-            <Menu.Item onClick={handleModal} className="hover:bg-white/5">
+            <Menu.Item onClick={() => openModal()} className="hover:bg-white/5">
               <Lucide icon="ToggleRight" className="w-4 h-4 mr-2" /> Logout
             </Menu.Item>
           </Menu.Items>
         </Menu>
       </div>
-      {showModal && <Modal onClose={handleClose} actionBar={<button onClick={handleLogout}>I accept</button>}>Are you sure you want to logout?</Modal>}
+      {confirmationModal && <Modal icon="LogOut" question={`Are you sure you want to logout?`} buttonText="Logout" buttonType="danger" information={`You will be logged out of your account.`} handleSubmit={handleLogout} confirmationModal={confirmationModal} setConfirmationModal={setConfirmationModal}/>}
     </>
   );
 }
