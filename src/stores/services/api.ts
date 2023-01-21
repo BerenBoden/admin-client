@@ -20,6 +20,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
   if (result.error && result.error.status === 401) {
+    
     const {id} = cookies.get("user");
     const refreshResult = await baseQuery({url: 'api/refresh', method: 'post', body: {userId: id}}, api, extraOptions) as any;
     if (refreshResult.data) {

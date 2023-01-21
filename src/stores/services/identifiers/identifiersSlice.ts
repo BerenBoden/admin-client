@@ -18,7 +18,12 @@ export const extendedApiSlice = api.injectEndpoints({
           pageStart = String(pageStart);
           pageLimit = String(pageLimit);
         }
-        tag = String(identifier.split("").map((el, i) => i === 0 ? el[i].toUpperCase() : el).join(''))
+        tag = String(
+          identifier
+            .split("")
+            .map((el, i) => (i === 0 ? el[i].toUpperCase() : el))
+            .join("")
+        );
         return {
           url: `api/identifiers${
             pageStart && pageLimit
@@ -41,21 +46,23 @@ export const extendedApiSlice = api.injectEndpoints({
     }),
     deleteIdentifier: builder.mutation({
       query: ({ id, identifier }: { id: any; identifier: string }) => {
-        tag = String(identifier.split("").map((el, i) => i === 0 ? el[i].toUpperCase() : el).join(''));
+        tag = String(
+          identifier
+            .split("")
+            .map((el, i) => (i === 0 ? el[i].toUpperCase() : el))
+            .join("")
+        );
         return {
           url: `api/identifiers/${id}`,
           method: "DELETE",
           body: id,
         };
       },
-      
       invalidatesTags: (result: any, error: any, { id }: any) => {
-  
         if (tag === "Identifiers") {
           return [{ type: `${tag}` as const, id }];
-        }
-        else {
-          return []
+        } else {
+          return [];
         }
       },
     }),

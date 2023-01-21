@@ -6,32 +6,32 @@ import { FormInput, FormSelect } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import { Menu } from "../../base-components/Headless";
+import { NavLink } from "react-router-dom";
 
 function Main() {
   return (
     <>
-      <div className="flex flex-col items-center mt-8 intro-y sm:flex-row">
-        <h2 className="mr-auto text-lg font-medium">Blog Layout</h2>
-        <div className="flex w-full mt-4 sm:w-auto sm:mt-0">
+      <div className="flex flex-wrap items-center col-span-12 mt-8 intro-y sm:flex-nowrap">
+        <NavLink to="/add-article">
           <Button variant="primary" className="mr-2 shadow-md">
-            Add New Post
+            Add New Article
           </Button>
-          <Menu className="ml-auto sm:ml-0">
-            <Menu.Button as={Button} className="px-2 !box">
-              <span className="flex items-center justify-center w-5 h-5">
-                <Lucide icon="Plus" className="w-4 h-4" />
-              </span>
-            </Menu.Button>
-            <Menu.Items className="w-40">
-              <Menu.Item>
-                <Lucide icon="Share2" className="w-4 h-4 mr-2" /> Share Post
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="Download" className="w-4 h-4 mr-2" /> Download
-                Post
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
+        </NavLink>
+        <div className="hidden mx-auto md:block text-slate-500">
+          Showing 1 to 7 of 6 entries
+        </div>
+        <div className="w-full mt-3 sm:w-auto sm:mt-0 sm:ml-auto md:ml-0">
+          <div className="relative w-56 text-slate-500">
+            <FormInput
+              type="text"
+              className="w-56 pr-10 !box"
+              placeholder="Search..."
+            />
+            <Lucide
+              icon="Search"
+              className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+            />
+          </div>
         </div>
       </div>
       <div className="grid grid-cols-12 gap-6 mt-5 intro-y">

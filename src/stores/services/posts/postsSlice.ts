@@ -15,7 +15,6 @@ export const extendedApiSlice = api.injectEndpoints({
         }),
         addPost: builder.mutation({
             query: (data) => {
-                console.log(data)
                 return{ 
                     url: `api/posts`,
                     method: 'POST',

@@ -13,27 +13,38 @@ import { Menu, Tab } from "../../base-components/Headless";
 import { useAppSelector } from "../../stores/hooks";
 import { mapObjectToId, slugify } from "../../utils/helper";
 import Toastify from "toastify-js";
-import IdentifierSelector from '../../components/IdentifierSelector'
+import IdentifierSelector from "../../components/IdentifierSelector";
 import { useGetUsersQuery } from "../../stores/services/users/usersSlice";
 import { useAddPostMutation } from "../../stores/services/posts/postsSlice";
 
- 
-function Main({content, identifiers}: {content: string, identifiers: Array<any>}) {
+function Main({
+  content,
+  identifiers,
+}: {
+  content: string;
+  identifiers: Array<any>;
+}) {
   const { user } = useAppSelector((state: any) => state.auth);
-  const [categories, setCategories] = useState([""]);
-  const [tags, setTags] = useState([""]);
+
+  const [selectedIdentifier, setSelectedIdentifier] = useState({categories: [""], tags: [""]});
+
+
+  const handleSelectedIdentifier = (identifierData: any, identifier: any) => {
+    const updatedSelectedIdentifier = {...selectedIdentifier, [identifier]: identifierData}
+    setSelectedIdentifier(updatedSelectedIdentifier)
+  }
   const [title, setTitle] = useState<any>("");
   const [salesReportFilter, setSalesReportFilter] = useState<string>();
-  const [author, setAuthor] = useState(user.username)
+  const [author, setAuthor] = useState(user.username);
   const [editorData, setEditorData] = useState("");
   const [image, setImage] = useState();
   const [imageHeader, setImageHeader] = useState<any>();
-  
 
   const [addPost, { isLoading: addPostIsLoading, isSuccess, isError, error }] =
     useAddPostMutation();
 
-  const { data: usersData, isLoading: getUsersIsLoading } = useGetUsersQuery('Users');
+  const { data: usersData, isLoading: getUsersIsLoading } =
+    useGetUsersQuery("Users");
 
   useEffect(() => {
     if (isSuccess) {
@@ -70,7 +81,6 @@ function Main({content, identifiers}: {content: string, identifiers: Array<any>}
     }
   }, [isSuccess, isError]);
 
-
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setImageHeader(event.target.files[0]);
@@ -94,8 +104,8 @@ function Main({content, identifiers}: {content: string, identifiers: Array<any>}
         title,
         content: editorData,
         slug: slugify(title),
-        blog_categories: mapObjectToId(categories),
-        blog_tags: mapObjectToId(tags),
+        blog_categories: mapObjectToId(selectedIdentifier.categories),
+        blog_tags: mapObjectToId(selectedIdentifier.tags),
       };
       const formData = new FormData();
       formData.append("data", JSON.stringify(data));
@@ -292,25 +302,29 @@ function Main({content, identifiers}: {content: string, identifiers: Array<any>}
                     <img
                       className="rounded"
                       alt="Midone Tailwind HTML Admin Template"
-                      src='#'
+                      src="#"
                     />
                   </div>
                   <div className="truncate">{author}</div>
                   <Lucide icon="ChevronDown" className="w-4 h-4 ml-auto" />
                 </Menu.Button>
                 <Menu.Items>
-                  {usersData && usersData.map((user: any) => (
-                    <Menu.Item key={user.id} onClick={() => setAuthor(user.username)}>
-                      <div className="absolute w-6 h-6 mr-3 image-fit">
-                        <img
-                          className="rounded"
-                          alt="Midone Tailwind HTML Admin Template"
-                          src="#"
-                        />
-                      </div>
-                      <div className="pl-1 ml-8">{user.username}</div>
-                    </Menu.Item>
-                  ))}
+                  {usersData &&
+                    usersData.map((user: any) => (
+                      <Menu.Item
+                        key={user.id}
+                        onClick={() => setAuthor(user.username)}
+                      >
+                        <div className="absolute w-6 h-6 mr-3 image-fit">
+                          <img
+                            className="rounded"
+                            alt="Midone Tailwind HTML Admin Template"
+                            src="#"
+                          />
+                        </div>
+                        <div className="pl-1 ml-8">{user.username}</div>
+                      </Menu.Item>
+                    ))}
                 </Menu.Items>
               </Menu>
             </div>
@@ -333,8 +347,12 @@ function Main({content, identifiers}: {content: string, identifiers: Array<any>}
             </div>
             {identifiers.map((identifier: any) => {
               return (
-                <IdentifierSelector identifier={identifier} content={content} setCategories={setCategories}/>
-              )
+                <IdentifierSelector
+                  identifier={identifier}
+                  content={content}
+                  handleSelectedIdentifier={handleSelectedIdentifier}
+                />
+              );
             })}
             {/* <div className="mt-3">
               <FormLabel htmlFor="post-form-3">Categories</FormLabel>
