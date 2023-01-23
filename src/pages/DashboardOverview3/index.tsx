@@ -15,7 +15,35 @@ import ReportMap from "../../components/ReportMap";
 import { Menu, Tab } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
 
+import { useAppSelector } from "../../stores/hooks";
+
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 function Main() {
+  const [message, setMessage] = useState();
+  
+  const { user } = useAppSelector((state: any) => state.auth);
+  console.log(user)
+
+    useEffect(() => {
+      const getData = async () => {
+        const { data } = await axios.get(
+          "https://api.github.com/repos/BerenBoden/admin-client/commits"
+        );
+        return data;
+      };
+    
+      const fetchData = async () => {
+        const data = await getData();
+        console.log(data);
+        setMessage(data[0].commit.message);
+      };
+    
+      fetchData();
+    }, []);
+
+
   return (
     <>
       <div className="relative">
@@ -29,20 +57,7 @@ function Main() {
               >
                 {({ dismiss }) => (
                   <>
-                    <span>
-                      Introducing new dashboard! Download now at
-                      <a
-                        href="https://themeforest.net/item/midone-jquery-tailwindcss-html-admin-template/26366820"
-                        className="ml-1 underline"
-                        target="blank"
-                      >
-                        themeforest.net
-                      </a>
-                      .
-                      <button className="rounded-md bg-white bg-opacity-20 dark:bg-darkmode-300 hover:bg-opacity-30 py-0.5 px-2 -my-3 ml-2">
-                        Live Preview
-                      </button>
-                    </span>
+                    <span>{message}</span>
                     <Alert.DismissButton
                       className="text-white"
                       onClick={dismiss}
@@ -74,7 +89,7 @@ function Main() {
                   </Menu.Items>
                 </Menu>
                 <div className="-mb-1 text-sm font-medium 2xl:text-base">
-                  Hi Angelina,{" "}
+                  Hi {user.username},{" "}
                   <span className="font-normal text-slate-600 dark:text-slate-300">
                     welcome back!
                   </span>

@@ -7,12 +7,18 @@ import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import { Menu } from "../../base-components/Headless";
 import { NavLink } from "react-router-dom";
+import { useGetArticlesQuery } from "../../stores/services/articles/articlesSlice";
 
 function Main() {
+  const { data, isLoading } = useGetArticlesQuery({ pageStart: 0, pageLimit: -1 });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div className="flex flex-wrap items-center col-span-12 mt-8 intro-y sm:flex-nowrap">
-        <NavLink to="/add-article">
+        <NavLink to="new">
           <Button variant="primary" className="mr-2 shadow-md">
             Add New Article
           </Button>
@@ -36,9 +42,9 @@ function Main() {
       </div>
       <div className="grid grid-cols-12 gap-6 mt-5 intro-y">
         {/* BEGIN: Blog Layout */}
-        {_.take(fakerData, 9).map((faker, fakerKey) => (
+        {data.data.map(({ id, attributes }: any, i: number) => (
           <div
-            key={fakerKey}
+            key={id}
             className="col-span-12 intro-y md:col-span-6 xl:col-span-4 box"
           >
             <div className="flex items-center px-5 py-4 border-b border-slate-200/60 dark:border-darkmode-400">
@@ -46,18 +52,18 @@ function Main() {
                 <img
                   alt="Midone Tailwind HTML Admin Template"
                   className="rounded-full"
-                  src={faker.photos[0]}
+                  src="#"
                 />
               </div>
               <div className="ml-3 mr-auto">
                 <a href="" className="font-medium">
-                  {faker.users[0].name}
+                  Firstname
                 </a>
                 <div className="flex text-slate-500 truncate text-xs mt-0.5">
                   <a className="inline-block truncate text-primary" href="">
-                    {faker.products[0].category}
+                    {attributes.title}
                   </a>
-                  <span className="mx-1">•</span> {faker.formattedTimes[0]}
+                  <span className="mx-1"></span> 2
                 </div>
               </div>
               <Menu className="ml-3">
@@ -83,14 +89,17 @@ function Main() {
                 <img
                   alt="Midone Tailwind HTML Admin Template"
                   className="rounded-md"
-                  src={faker.images[0]}
+                  src={`${import.meta.env.VITE_TESTSTRAPI_API}${
+                    attributes.image_header.data.attributes.formats.thumbnail
+                      .url
+                  }`}
                 />
               </div>
               <a href="" className="block mt-5 text-base font-medium">
-                {faker.news[0].title}
+                {attributes.title}
               </a>
               <div className="mt-2 text-slate-600 dark:text-slate-500">
-                {faker.news[0].shortContent}
+                {attributes.title}
               </div>
             </div>
             <div className="flex items-center px-5 py-3 border-t border-slate-200/60 dark:border-darkmode-400">
@@ -104,31 +113,29 @@ function Main() {
               </Tippy>
               <div className="flex mr-2 intro-x">
                 <div className="w-8 h-8 intro-x image-fit">
-                  <Tippy
+                  {/* <Tippy
                     as="img"
                     alt="Midone Tailwind HTML Admin Template"
                     className="border border-white rounded-full zoom-in"
-                    src={faker.photos[0]}
-                    content={faker.users[0].name}
-                  />
+                    src="#"
+                  /> */}
                 </div>
                 <div className="w-8 h-8 -ml-4 intro-x image-fit">
-                  <Tippy
+                  {/* <Tippy
                     as="img"
                     alt="Midone Tailwind HTML Admin Template"
                     className="border border-white rounded-full zoom-in"
-                    src={faker.photos[1]}
-                    content={faker.users[1].name}
-                  />
+                    src="#"
+                    
+                  /> */}
                 </div>
                 <div className="w-8 h-8 -ml-4 intro-x image-fit">
-                  <Tippy
+                  {/* <Tippy
                     as="img"
                     alt="Midone Tailwind HTML Admin Template"
                     className="border border-white rounded-full zoom-in"
-                    src={faker.photos[2]}
-                    content={faker.users[2].name}
-                  />
+                    src="#"
+                  /> */}
                 </div>
               </div>
               <Tippy
@@ -151,14 +158,13 @@ function Main() {
             <div className="px-5 pt-3 pb-5 border-t border-slate-200/60 dark:border-darkmode-400">
               <div className="flex w-full text-xs text-slate-500 sm:text-sm">
                 <div className="mr-2">
-                  Comments:{" "}
-                  <span className="font-medium">{faker.totals[0]}</span>
+                  Comments: <span className="font-medium">0</span>
                 </div>
                 <div className="mr-2">
-                  Views: <span className="font-medium">{faker.totals[1]}k</span>
+                  Views: <span className="font-medium">0</span>
                 </div>
                 <div className="ml-auto">
-                  Likes: <span className="font-medium">{faker.totals[2]}k</span>
+                  Likes: <span className="font-medium">0</span>
                 </div>
               </div>
               <div className="flex items-center w-full mt-3">
@@ -166,7 +172,7 @@ function Main() {
                   <img
                     alt="Midone Tailwind HTML Admin Template"
                     className="rounded-full"
-                    src={faker.photos[0]}
+                    src="#"
                   />
                 </div>
                 <div className="relative flex-1 text-slate-600">

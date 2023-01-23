@@ -118,24 +118,7 @@ function Main() {
                   </FormLabel>
                   <div className="flex-1 w-full pt-4 mt-3 border-2 border-dashed rounded-md xl:mt-0 dark:border-darkmode-400">
                     <div className="grid grid-cols-10 gap-5 pl-4 pr-5">
-                      {_.take(fakerData, 5).map((faker, fakerKey) => (
-                        <div
-                          key={fakerKey}
-                          className="relative col-span-5 cursor-pointer md:col-span-2 h-28 image-fit zoom-in"
-                        >
-                          <img
-                            className="rounded-md"
-                            alt="Midone - HTML Admin Template"
-                            src={faker.photos[0]}
-                          />
-                          <Tippy
-                            content="Remove this image?"
-                            className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 -mt-2 -mr-2 text-white rounded-full bg-danger"
-                          >
-                            <Lucide icon="X" className="w-4 h-4" />
-                          </Tippy>
-                        </div>
-                      ))}
+                      
                     </div>
                     <div className="relative flex items-center justify-center px-4 pb-4 mt-5 cursor-pointer">
                       <Lucide icon="Image" className="w-4 h-4 mr-2" />

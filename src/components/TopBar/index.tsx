@@ -163,7 +163,7 @@ function Main() {
                   <img
                     alt="Midone Tailwind HTML Admin Template"
                     className="rounded-full"
-                    src={faker.photos[0]}
+                    src="#"
                   />
                   <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                 </div>
@@ -190,7 +190,7 @@ function Main() {
           <Menu.Button className="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in intro-x">
             <img
               alt="Midone Tailwind HTML Admin Template"
-              src={fakerData[9].photos[0]}
+              src="#"
             />
           </Menu.Button>
           <Menu.Items className="w-56 mt-px text-white bg-primary">

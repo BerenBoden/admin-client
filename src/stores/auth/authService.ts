@@ -9,7 +9,7 @@ const cookies = new Cookies();
 
 // Register user
 const register = async (userData: any): Promise<any> => {
-  const response = await axios.post(import.meta.env.VITE_BACKEND_API, userData);
+  const response = await axios.post(import.meta.env.VITE_TESTBACKEND_API, userData);
   const cookies = new Cookies();
 
   if (response.data) {

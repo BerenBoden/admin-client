@@ -27,43 +27,33 @@ const initialState: SideMenuState = {
       subMenu: [
         {
           icon: "Activity",
-          pathname: "/add-product",
-          title: "Add Product",
+          pathname: "/products",
+          title: "Products",
         },
         {
           icon: "Activity",
-          pathname: "/edit-products",
-          title: "Edit Products",
+          pathname: "/product-categories",
+          title: "Categories",
         },
         {
           icon: "Activity",
-          pathname: "/edit-product-categories",
-          title: "Edit Categories",
+          pathname: "/product-tags",
+          title: "Tags",
         },
         {
           icon: "Activity",
-          pathname: "/edit-product-tags",
-          title: "Edit Tags",
+          pathname: "/transactions",
+          title: "Transactions",
         },
         {
           icon: "Activity",
-          pathname: "/view-transactions",
-          title: "View Transactions",
+          pathname: "/sellers",
+          title: "Sellers",
         },
         {
           icon: "Activity",
-          pathname: "/edit-sellers",
-          title: "Edit Sellers",
-        },
-        {
-          icon: "Activity",
-          pathname: "/view-reviews",
-          title: "View Reviews",
-        },
-        {
-          icon: "Activity",
-          pathname: "/view-analytics",
-          title: "View Analytics",
+          pathname: "/analytics",
+          title: "Analytics",
         },
       ],
     },
@@ -78,12 +68,12 @@ const initialState: SideMenuState = {
         },
         {
           icon: "Activity",
-          pathname: "/blog-categories",
+          pathname: "/article-categories",
           title: "Categories",
         },
         {
           icon: "Activity",
-          pathname: "/blog-tags",
+          pathname: "/article-tags",
           title: "Tags",
         },
         {
@@ -112,12 +102,12 @@ const initialState: SideMenuState = {
     {
       icon: "Users",
       title: "Users",
-      pathname: "/users-layout-1",
+      pathname: "/users",
     },
     {
       icon: "Trello",
       title: "Profile",
-      pathname: "/profile-overview-1",
+      pathname: "/profile",
     },
     // {
     //   icon: "Layout",

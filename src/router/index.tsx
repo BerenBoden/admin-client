@@ -5,7 +5,6 @@ import DashboardOverview3 from "../pages/DashboardOverview3";
 import DashboardOverview4 from "../pages/DashboardOverview4";
 import Identifiers from "../pages/Identifiers";
 import AddProduct from "../pages/AddProduct";
-import ProductList from "../pages/ProductList";
 import ProductGrid from "../pages/ProductGrid";
 import TransactionList from "../pages/TransactionList";
 import TransactionDetail from "../pages/TransactionDetail";
@@ -19,19 +18,13 @@ import Chat from "../pages/Chat";
 import Post from "../pages/Post";
 import Calendar from "../pages/Calendar";
 import CrudDataList from "../pages/CrudDataList";
-import CrudForm from "../pages/CrudForm";
-import UsersLayout1 from "../pages/UsersLayout1";
-import UsersLayout2 from "../pages/UsersLayout2";
-import UsersLayout3 from "../pages/UsersLayout3";
-import ProfileOverview1 from "../pages/ProfileOverview1";
-import ProfileOverview2 from "../pages/ProfileOverview2";
-import ProfileOverview3 from "../pages/ProfileOverview3";
+import IdentifierEdit from "../pages/IdentifierEdit";
+import Users from "../pages/Users";
+import Profile from "../pages/Profile";
 import WizardLayout1 from "../pages/WizardLayout1";
 import WizardLayout2 from "../pages/WizardLayout2";
 import WizardLayout3 from "../pages/WizardLayout3";
 import BlogLayout1 from "../pages/BlogLayout1";
-import BlogLayout2 from "../pages/BlogLayout2";
-import BlogLayout3 from "../pages/BlogLayout3";
 import PricingLayout1 from "../pages/PricingLayout1";
 import PricingLayout2 from "../pages/PricingLayout2";
 import InvoiceLayout1 from "../pages/InvoiceLayout1";
@@ -94,30 +87,26 @@ function Router() {
         },
         {
           path: "product-categories",
-          element: <Identifiers content="product" identifiers={["categories"]} />,
+          element: <Identifiers content="product" identifiers={["categories"]} />
         },
         {
           path: "product-tags",
           element: <Identifiers content="product" identifiers={["tags"]} />,
         },
         {
-          path: "blog-categories",
-          element: <Identifiers content="blog" identifiers={["categories"]} />,
+          path: "article-categories",
+          element: <Identifiers content="article" identifiers={["categories"]} />,
         },
         {
-          path: "blog-tags",
-          element: <Identifiers content="blog" identifiers={["tags"]} />,
+          path: "article-tags",
+          element: <Identifiers content="article" identifiers={["tags"]} />,
         },
         {
-          path: "add-product",
+          path: "products/new",
           element: <AddProduct />,
         },
         {
-          path: "product-list",
-          element: <ProductList />,
-        },
-        {
-          path: "product-grid",
+          path: "products",
           element: <ProductGrid />,
         },
         {
@@ -157,44 +146,36 @@ function Router() {
           element: <Chat />,
         },
         {
-          path: "add-article",
-          element: <Post content="blog" identifiers={["categories", "tags"]} />,
+          path: "articles/new",
+          element: <Post content="article" identifiers={["categories", "tags"]} />,
         },
         {
           path: "calendar",
           element: <Calendar />,
         },
         {
-          path: "crud-data-list",
-          element: <CrudDataList />,
+          path: "product-tags/new",
+          element: <IdentifierEdit content="product" identifier="tags" />,
         },
         {
-          path: "crud-form",
-          element: <CrudForm />,
+          path: "product-categories/new",
+          element: <IdentifierEdit content="product" identifier="categories" />,
         },
         {
-          path: "users-layout-1",
-          element: <UsersLayout1 />,
+          path: "article-tags/new",
+          element: <IdentifierEdit content="article" identifier="tags" />,
         },
         {
-          path: "users-layout-2",
-          element: <UsersLayout2 />,
+          path: "article-categories/new",
+          element: <IdentifierEdit content="article" identifier="categories" />,
         },
         {
-          path: "users-layout-3",
-          element: <UsersLayout3 />,
+          path: "users",
+          element: <Users />,
         },
         {
-          path: "profile-overview-1",
-          element: <ProfileOverview1 />,
-        },
-        {
-          path: "profile-overview-2",
-          element: <ProfileOverview2 />,
-        },
-        {
-          path: "profile-overview-3",
-          element: <ProfileOverview3 />,
+          path: "profile",
+          element: <Profile />,
         },
         {
           path: "wizard-layout-1",
@@ -211,14 +192,6 @@ function Router() {
         {
           path: "articles",
           element: <BlogLayout1 />,
-        },
-        {
-          path: "blog-layout-2",
-          element: <BlogLayout2 />,
-        },
-        {
-          path: "blog-layout-3",
-          element: <BlogLayout3 />,
         },
         {
           path: "pricing-layout-1",
@@ -263,14 +236,6 @@ function Router() {
         {
           path: "tabulator",
           element: <Tabulator />,
-        },
-        {
-          path: "modal",
-          element: <Modal />,
-        },
-        {
-          path: "slideover",
-          element: <Slideover />,
         },
         {
           path: "notification",

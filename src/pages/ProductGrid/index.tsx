@@ -6,6 +6,7 @@ import Pagination from "../../base-components/Pagination";
 import { FormInput, FormSelect } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
+import {Link} from 'react-router-dom'
 
 function Main() {
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
@@ -16,9 +17,11 @@ function Main() {
       <h2 className="mt-10 text-lg font-medium intro-y">Product Grid</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap">
-          <Button variant="primary" className="mr-2 shadow-md">
-            Add New Product
-          </Button>
+          <Link to="new">
+            <Button variant="primary" className="mr-2 shadow-md">
+              Add New Product
+            </Button>
+          </Link>
           <Menu>
             <Menu.Button as={Button} className="px-2 !box">
               <span className="flex items-center justify-center w-5 h-5">

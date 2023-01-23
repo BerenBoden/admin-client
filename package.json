@@ -2,10 +2,11 @@
   "name": "tinker-react",
   "private": true,
   "version": "0.0.0",
+  "homepage": ".",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "deploy": "aws s3 sync dist/ s3://firesidecandles-dashboard",
+    "deploy": "aws s3 sync dist/ s3://admin.firesidecandles.co.nz",
     "prod": "npm run build && npm run deploy",
     "preview": "vite preview"
   },
@@ -38,6 +39,7 @@
     "litepicker": "^2.0.12",
     "lucide": "^0.90.0",
     "lucide-react": "^0.88.0",
+    "pluralize": "^8.0.0",
     "react": "^18.2.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
@@ -64,6 +66,7 @@
     "@types/google.maps": "^3.50.2",
     "@types/js-beautify": "^1.13.3",
     "@types/lodash": "^4.14.184",
+    "@types/pluralize": "^0.0.29",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/react-modal": "^3.13.1",

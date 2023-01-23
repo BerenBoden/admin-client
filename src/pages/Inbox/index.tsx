@@ -326,7 +326,7 @@ function Main() {
                           <img
                             alt="Midone Tailwind HTML Admin Template"
                             className="rounded-full"
-                            src={faker.photos[0]}
+                            src="#"
                           />
                         </div>
                         <div

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { Cookies } from "react-cookie";
-import {logout} from '../auth/authSlice';
+import { logout } from "../auth/authSlice";
 
 const cookies = new Cookies();
 
@@ -20,15 +20,20 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
   if (result.error && result.error.status === 401) {
-    
-    const {id} = cookies.get("user");
-    const refreshResult = await baseQuery({url: 'api/refresh', method: 'post', body: {userId: id}}, api, extraOptions) as any;
+    const { id } = cookies.get("user");
+    const refreshResult = (await baseQuery(
+      { url: "api/refresh", method: "post", body: { userId: id } },
+      api,
+      extraOptions
+    )) as any;
     if (refreshResult.data) {
-      cookies.set("token", JSON.stringify(refreshResult.data.data), { path: "/" });
+      cookies.set("token", JSON.stringify(refreshResult.data.data), {
+        path: "/",
+      });
       result = await baseQuery(args, api, extraOptions);
     } else {
       if (result.error?.status === 401) {
-        api.dispatch(logout())
+        api.dispatch(logout());
         retry.fail(result.error);
       }
     }
@@ -39,6 +44,6 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Identifiers", "Posts", "Users"],
+  tagTypes: ["Tags", "Categories", "Articles", "Users"],
   endpoints: (builder) => ({}),
 });

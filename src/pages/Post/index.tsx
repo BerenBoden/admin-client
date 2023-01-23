@@ -15,7 +15,7 @@ import { mapObjectToId, slugify } from "../../utils/helper";
 import Toastify from "toastify-js";
 import IdentifierSelector from "../../components/IdentifierSelector";
 import { useGetUsersQuery } from "../../stores/services/users/usersSlice";
-import { useAddPostMutation } from "../../stores/services/posts/postsSlice";
+import { useAddArticleMutation } from "../../stores/services/articles/articlesSlice";
 
 function Main({
   content,
@@ -26,13 +26,18 @@ function Main({
 }) {
   const { user } = useAppSelector((state: any) => state.auth);
 
-  const [selectedIdentifier, setSelectedIdentifier] = useState({categories: [""], tags: [""]});
-
+  const [selectedIdentifier, setSelectedIdentifier] = useState({
+    categories: [""],
+    tags: [""],
+  });
 
   const handleSelectedIdentifier = (identifierData: any, identifier: any) => {
-    const updatedSelectedIdentifier = {...selectedIdentifier, [identifier]: identifierData}
-    setSelectedIdentifier(updatedSelectedIdentifier)
-  }
+    const updatedSelectedIdentifier = {
+      ...selectedIdentifier,
+      [identifier]: identifierData,
+    };
+    setSelectedIdentifier(updatedSelectedIdentifier);
+  };
   const [title, setTitle] = useState<any>("");
   const [salesReportFilter, setSalesReportFilter] = useState<string>();
   const [author, setAuthor] = useState(user.username);
@@ -40,8 +45,8 @@ function Main({
   const [image, setImage] = useState();
   const [imageHeader, setImageHeader] = useState<any>();
 
-  const [addPost, { isLoading: addPostIsLoading, isSuccess, isError, error }] =
-    useAddPostMutation();
+  const [addArticle, { isLoading: addArticleIsLoading, isSuccess, isError }] =
+    useAddArticleMutation();
 
   const { data: usersData, isLoading: getUsersIsLoading } =
     useGetUsersQuery("Users");
@@ -49,7 +54,7 @@ function Main({
   useEffect(() => {
     if (isSuccess) {
       Toastify({
-        text: "Blog post added successfully!",
+        text: "Article added successfully!",
         duration: 4000,
         close: true,
         gravity: "top", // `top` or `bottom`
@@ -112,20 +117,20 @@ function Main({
       formData.append("image_header", imageHeader);
       formData.append("Content-Type", "multipart/form-data");
 
-      addPost(formData);
+      addArticle(formData);
     } catch (err) {
       console.log(err);
     }
   };
 
-  if (addPostIsLoading) {
+  if (addArticleIsLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
       <div className="flex flex-col items-center mt-8 intro-y sm:flex-row">
-        <h2 className="mr-auto text-lg font-medium">Add New Post</h2>
+        <h2 className="mr-auto text-lg font-medium">Add New Article</h2>
         <div className="flex w-full mt-4 sm:w-auto sm:mt-0">
           <Menu>
             <Menu.Button
@@ -354,36 +359,6 @@ function Main({
                 />
               );
             })}
-            {/* <div className="mt-3">
-              <FormLabel htmlFor="post-form-3">Categories</FormLabel>
-              <TomSelect
-                id="post-form-3"
-                value={categories}
-                onChange={setCategories}
-                className="w-full"
-                multiple
-              >
-                {categoriesData &&
-                  categoriesData.data.map((el: any) => (
-                    <option value={el.id}>{el.attributes.name}</option>
-                  ))}
-              </TomSelect>
-            </div>
-            <div className="mt-3">
-              <FormLabel htmlFor="post-form-4">Tags</FormLabel>
-              <TomSelect
-                id="post-form-4"
-                value={tags}
-                onChange={setTags}
-                className="w-full"
-                multiple
-              >
-                {tagsData &&
-                  tagsData.data.map((el: any) => (
-                    <option value={el.id}>{el.attributes.name}</option>
-                  ))}
-              </TomSelect>
-            </div> */}
             <FormSwitch className="flex flex-col items-start mt-3">
               <FormSwitch.Label htmlFor="post-form-5" className="mb-2 ml-0">
                 Published

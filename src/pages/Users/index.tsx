@@ -3,7 +3,9 @@ import fakerData from "../../utils/faker";
 import Button from "../../base-components/Button";
 import Pagination from "../../base-components/Pagination";
 import { FormInput, FormSelect } from "../../base-components/Form";
+import Progress from "../../base-components/Progress";
 import Lucide from "../../base-components/Lucide";
+import Tippy from "../../base-components/Tippy";
 import { Menu } from "../../base-components/Headless";
 
 function Main() {
@@ -49,59 +51,68 @@ function Main() {
           </div>
         </div>
         {/* BEGIN: Users Layout */}
-        {_.take(fakerData, 9).map((faker, fakerKey) => (
-          <div
-            key={fakerKey}
-            className="col-span-12 intro-y md:col-span-6 lg:col-span-4"
-          >
+        {_.take(fakerData, 10).map((faker, fakerKey) => (
+          <div key={fakerKey} className="col-span-12 intro-y md:col-span-6">
             <div className="box">
-              <div className="flex items-start px-5 pt-5">
-                <div className="flex flex-col items-center w-full lg:flex-row">
-                  <div className="w-16 h-16 image-fit">
-                    <img
-                      alt="Midone Tailwind HTML Admin Template"
-                      className="rounded-full"
-                      src={faker.photos[0]}
-                    />
-                  </div>
-                  <div className="mt-3 text-center lg:ml-4 lg:text-left lg:mt-0">
-                    <a href="" className="font-medium">
-                      {faker.users[0].name}
-                    </a>
-                    <div className="text-slate-500 text-xs mt-0.5">
-                      {faker.jobs[0]}
-                    </div>
+              <div className="flex flex-col items-center p-5 border-b lg:flex-row border-slate-200/60 dark:border-darkmode-400">
+                <div className="w-24 h-24 lg:w-12 lg:h-12 image-fit lg:mr-1">
+                  <img
+                    alt="Midone Tailwind HTML Admin Template"
+                    className="rounded-full"
+                    src="#"
+                  />
+                </div>
+                <div className="mt-3 text-center lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
+                  <a href="" className="font-medium">
+                    {faker.users[0].name}
+                  </a>
+                  <div className="text-slate-500 text-xs mt-0.5">
+                    {faker.jobs[0]}
                   </div>
                 </div>
-                <Menu className="absolute top-0 right-0 mt-3 mr-5">
-                  <Menu.Button tag="a" className="block w-5 h-5" href="#">
-                    <Lucide
-                      icon="MoreHorizontal"
-                      className="w-5 h-5 text-slate-500"
-                    />
-                  </Menu.Button>
-                  <Menu.Items className="w-40">
-                    <Menu.Item>
-                      <Lucide icon="Edit2" className="w-4 h-4 mr-2" /> Edit
-                    </Menu.Item>
-                    <Menu.Item>
-                      <Lucide icon="Trash" className="w-4 h-4 mr-2" /> Delete
-                    </Menu.Item>
-                  </Menu.Items>
-                </Menu>
-              </div>
-              <div className="p-5 text-center lg:text-left">
-                <div>{faker.news[0].shortContent}</div>
-                <div className="flex items-center justify-center mt-5 lg:justify-start text-slate-500">
-                  <Lucide icon="Mail" className="w-3 h-3 mr-2" />
-                  {faker.users[0].email}
+                <div className="flex mt-3 -ml-2 lg:ml-0 lg:justify-end lg:mt-0">
+                  <Tippy
+                    as="a"
+                    href=""
+                    className="flex items-center justify-center w-8 h-8 ml-2 border rounded-full dark:border-darkmode-400 text-slate-400 zoom-in"
+                    content="Facebook"
+                  >
+                    <Lucide icon="Facebook" className="w-3 h-3 fill-current" />
+                  </Tippy>
+                  <Tippy
+                    as="a"
+                    href=""
+                    className="flex items-center justify-center w-8 h-8 ml-2 border rounded-full dark:border-darkmode-400 text-slate-400 zoom-in"
+                    content="Twitter"
+                  >
+                    <Lucide icon="Twitter" className="w-3 h-3 fill-current" />
+                  </Tippy>
+                  <Tippy
+                    as="a"
+                    href=""
+                    className="flex items-center justify-center w-8 h-8 ml-2 border rounded-full dark:border-darkmode-400 text-slate-400 zoom-in"
+                    content="Linked In"
+                  >
+                    <Lucide icon="Linkedin" className="w-3 h-3 fill-current" />
+                  </Tippy>
                 </div>
-                <div className="flex items-center justify-center mt-1 lg:justify-start text-slate-500">
-                  <Lucide icon="Instagram" className="w-3 h-3 mr-2" />
-                  {faker.users[0].name}
-                </div>
               </div>
-              <div className="p-5 text-center border-t lg:text-right border-slate-200/60 dark:border-darkmode-400">
+              <div className="flex flex-wrap items-center justify-center p-5 lg:flex-nowrap">
+                <div className="w-full mb-4 mr-auto lg:w-1/2 lg:mb-0">
+                  <div className="flex text-xs text-slate-500">
+                    <div className="mr-auto">Progress</div>
+                    <div>20%</div>
+                  </div>
+                  <Progress className="h-1 mt-2">
+                    <Progress.Bar
+                      className="w-1/4 bg-primary"
+                      role="progressbar"
+                      aria-valuenow={0}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    ></Progress.Bar>
+                  </Progress>
+                </div>
                 <Button variant="primary" className="px-2 py-1 mr-2">
                   Message
                 </Button>

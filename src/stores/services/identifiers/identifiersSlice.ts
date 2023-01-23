@@ -33,19 +33,25 @@ export const extendedApiSlice = api.injectEndpoints({
         };
       },
       providesTags: (result, error, arg) => {
-        return result
-          ? [
-              ...result.data.map(({ id }: any) => ({
-                type: `${tag}` as const,
-                id,
-              })),
-              `${tag}`,
-            ]
-          : [`${tag}`];
+        return [
+          ...result.data.map(({ id }: any) => ({
+            type: `${tag}` as const,
+            id,
+          })),
+          { type: `${tag}`, id: "LIST" },
+        ];
       },
     }),
     deleteIdentifier: builder.mutation({
-      query: ({ id, identifier }: { id: any; identifier: string }) => {
+      query: ({
+        id,
+        content,
+        identifier,
+      }: {
+        id: any;
+        content: string;
+        identifier: string;
+      }) => {
         tag = String(
           identifier
             .split("")
@@ -53,14 +59,55 @@ export const extendedApiSlice = api.injectEndpoints({
             .join("")
         );
         return {
-          url: `api/identifiers/${id}`,
+          url: `api/identifiers/${id}${
+            content && identifier
+              ? `?content=${content}&identifier=${identifier}`
+              : ""
+          }`,
           method: "DELETE",
           body: id,
         };
       },
       invalidatesTags: (result: any, error: any, { id }: any) => {
-        if (tag === "Identifiers") {
+        if (tag === "Tags" || tag === "Categories") {
           return [{ type: `${tag}` as const, id }];
+        } else {
+          return [];
+        }
+      },
+    }),
+    addIdentifier: builder.mutation({
+      query: ({
+        name,
+        content,
+        identifier,
+        related,
+      }: {
+        name: string;
+        content: string;
+        identifier: string;
+        related: any;
+      }) => {
+        tag = String(
+          identifier
+            .split("")
+            .map((el, i) => (i === 0 ? el[i].toUpperCase() : el))
+            .join("")
+        );
+        return {
+          url: `api/identifiers${
+            content && identifier
+              ? `?content=${content}&identifier=${identifier}`
+              : ""
+          }`,
+          method: "POST",
+          body: { name: name, related: related },
+        };
+      },
+      invalidatesTags: (result: any, error: any) => {
+        console.log(result, error, tag);
+        if (tag === "Tags" || tag === "Categories") {
+          return [{ type: `${tag}` as const, id: "LIST" }];
         } else {
           return [];
         }
@@ -69,5 +116,8 @@ export const extendedApiSlice = api.injectEndpoints({
   }),
 });
 
-export const { useGetIdentifiersQuery, useDeleteIdentifierMutation } =
-  extendedApiSlice;
+export const {
+  useGetIdentifiersQuery,
+  useDeleteIdentifierMutation,
+  useAddIdentifierMutation,
+} = extendedApiSlice;

@@ -1,12 +1,14 @@
 // TODO Break into smaller components.
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import clsx from "clsx";
 import Button from "../../base-components/Button";
 import Pagination from "../../base-components/Pagination";
 import { FormInput, FormSelect } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
-
+import Notification from "../../base-components/Notification";
+import { NotificationElement } from "../../base-components/Notification";
+import { Link } from "react-router-dom";
 //Need to reimplment
 import Tippy from "../../base-components/Tippy";
 import Table from "../../base-components/Table";
@@ -24,12 +26,23 @@ function Main({
   content: string;
   identifier: string;
 }) {
+
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [pageLimit, setPageLimit] = useState(10);
   const [pageStart, setPageStart] = useState(0);
   const [page, setPage] = useState(1);
   const [deleteName, setDeleteName] = useState("");
   const idRef = useRef(null);
+  const [notificationProps, setNotificationProps] = useState({
+    icon: "CheckCircle",
+    text: "",
+    className: "",
+  });
+  const notification = useRef<NotificationElement>();
+  const isValidIcon = (icon: string): icon is "CheckCircle" | "XCircle" => {
+    return ["CheckCircle", "XCircle"].includes(icon)
+  }
+  const validIcon = isValidIcon(notificationProps.icon) ? notificationProps.icon : "CheckCircle";
 
   const { data, isLoading } = useGetIdentifiersQuery({
     pageStart,
@@ -38,8 +51,32 @@ function Main({
     identifier,
   });
 
-  const [deleteCategory] = useDeleteIdentifierMutation();
-
+  const [
+    deleteCategory,
+    {
+      isLoading: deleteIsLoading,
+      isError: deleteIsError,
+      isSuccess: deleteIsSuccess,
+    },
+  ] = useDeleteIdentifierMutation();
+  useEffect(() => {
+    if (deleteIsSuccess) {
+      setNotificationProps({
+        icon: "CheckCircle",
+        text: `Successfully deleted ${identifier}: "${deleteName}"`,
+        className: "text-green-500",
+      });
+      notification.current?.showToast();
+    }
+    if (deleteIsError) {
+      setNotificationProps({
+        icon: "XCircle",
+        text: "There was an error, please try again.",
+        className: "text-red-500",
+      });
+      notification.current?.showToast();
+    }
+  }, [deleteIsSuccess, deleteIsError]);
   const pages = pagination(data?.meta.pagination.total, pageLimit);
   const pagesArray = Array.from({ length: pages }, (_, i) => i + 1);
   const currentPages = pagesArray.slice(page - 1, page + 2);
@@ -63,20 +100,25 @@ function Main({
 
   const handleDelete = async () => {
     setConfirmationModal(false);
-    deleteCategory({ id: idRef.current, identifier});
+    deleteCategory({ id: idRef.current, content, identifier });
   };
-  if (isLoading) {
+
+  if (isLoading || deleteIsLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      <h2 className="mt-10 text-lg font-medium intro-y capitalize">{content} {identifier}</h2>
+      <h2 className="mt-10 text-lg font-medium intro-y capitalize">
+        {content} {identifier}
+      </h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap">
-          <Button variant="primary" className="mr-2 shadow-md">
-            Add New Category
-          </Button>
+          <Link to={`new`}>
+            <Button variant="primary" className="mr-2 shadow-md capitalize">
+              Add New {identifier}
+            </Button>
+          </Link>
           <div className="hidden mx-auto md:block text-slate-500">
             Showing 1 to {pageLimit} of {data.meta.pagination.total} entries
           </div>
@@ -103,7 +145,7 @@ function Main({
                   IMAGES
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap uppercase">
-                {identifier} NAME
+                  {identifier} NAME
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   SLUG
@@ -165,7 +207,7 @@ function Main({
                         href="#"
                       >
                         <Lucide icon="ExternalLink" className="w-4 h-4 mr-2" />
-                        /blog/categories/{item.attributes.name}
+                        /{content}/{identifier}/{item.attributes.name}
                       </a>
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -177,7 +219,7 @@ function Main({
                         ])}
                       >
                         <Lucide icon="CheckSquare" className="w-4 h-4 mr-2" />
-                        {/* {faker.trueFalse[0] ? "Active" : "Inactive"} */}
+                        {"Active"}
                       </div>
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
@@ -242,6 +284,25 @@ function Main({
         {/* END: Pagination */}
       </div>
       {/* BEGIN: Delete Confirmation Modal */}
+      <div className="text-center">
+        {/* BEGIN: Notification Content */}
+        <Notification
+          getRef={(el) => {
+            notification.current = el;
+          }}
+          className="flex items-center"
+        >
+          <Lucide
+            icon={validIcon}
+            className={notificationProps.className}
+          />
+          <div className="ml-4 mr-4">
+            <div className="font-medium">
+              {notificationProps.text}
+            </div>
+          </div>
+        </Notification>
+      </div>
       {confirmationModal && (
         <Modal
           icon="XCircle"

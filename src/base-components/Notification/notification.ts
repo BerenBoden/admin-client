@@ -9,7 +9,7 @@ const init = (el: NotificationElement, props: NotificationProps) => {
     clonedEl.classList.remove("hidden");
     clonedEl.classList.add(toastifyClass);
     clonedEl.toastify = Toastify({
-      duration: -1,
+      duration: 2000,
       newWindow: true,
       close: true,
       gravity: "top",

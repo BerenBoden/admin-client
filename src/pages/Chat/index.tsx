@@ -89,7 +89,7 @@ function Main() {
                             <img
                               alt="Midone Tailwind HTML Admin Template"
                               className="rounded-full"
-                              src={faker.photos[0]}
+                              src="#"
                             />
                             <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                           </div>
@@ -117,7 +117,7 @@ function Main() {
                       <img
                         alt="Midone Tailwind HTML Admin Template"
                         className="rounded-full"
-                        src={faker.photos[0]}
+                        src="#"
                       />
                       <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                     </div>
@@ -173,7 +173,7 @@ function Main() {
                     <img
                       alt="Midone Tailwind HTML Admin Template"
                       className="rounded-full"
-                      src={fakerData[0].photos[0]}
+                      src="#"
                     />
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                   </div>
@@ -211,7 +211,7 @@ function Main() {
                     <img
                       alt="Midone Tailwind HTML Admin Template"
                       className="rounded-full"
-                      src={fakerData[1].photos[0]}
+                      src="#"
                     />
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                   </div>
@@ -250,7 +250,7 @@ function Main() {
                     <img
                       alt="Midone Tailwind HTML Admin Template"
                       className="rounded-full"
-                      src={fakerData[2].photos[0]}
+                      src='#'
                     />
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                   </div>
@@ -288,7 +288,7 @@ function Main() {
                     <img
                       alt="Midone Tailwind HTML Admin Template"
                       className="rounded-full"
-                      src={fakerData[3].photos[0]}
+                      src='#'
                     />
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                   </div>
@@ -326,7 +326,7 @@ function Main() {
                     <img
                       alt="Midone Tailwind HTML Admin Template"
                       className="rounded-full"
-                      src={fakerData[4].photos[0]}
+                      src="#"
                     />
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                   </div>
@@ -367,7 +367,7 @@ function Main() {
                   <div className="flex-none w-20 h-20 mx-auto overflow-hidden rounded-full image-fit">
                     <img
                       alt="Midone Tailwind HTML Admin Template"
-                      src={fakerData[0].photos[0]}
+                      src="#"
                     />
                   </div>
                   <div className="mt-3 text-center">
@@ -440,7 +440,7 @@ function Main() {
                       <img
                         alt="Midone Tailwind HTML Admin Template"
                         className="rounded-full"
-                        src={fakerData[0].photos[0]}
+                        src="#"
                       />
                     </div>
                     <div className="ml-3 mr-auto">
@@ -487,7 +487,7 @@ function Main() {
                       <img
                         alt="Midone Tailwind HTML Admin Template"
                         className="rounded-full"
-                        src={fakerData[0].photos[0]}
+                        src="#"
                       />
                     </div>
                     <div className="px-4 py-3 bg-slate-100 dark:bg-darkmode-400 text-slate-500 rounded-r-md rounded-t-md">
@@ -553,7 +553,7 @@ function Main() {
                       <img
                         alt="Midone Tailwind HTML Admin Template"
                         className="rounded-full"
-                        src={fakerData[1].photos[0]}
+                        src="#"
                       />
                     </div>
                   </div>
@@ -591,7 +591,7 @@ function Main() {
                       <img
                         alt="Midone Tailwind HTML Admin Template"
                         className="rounded-full"
-                        src={fakerData[1].photos[0]}
+                        src="#"
                       />
                     </div>
                   </div>
@@ -604,7 +604,7 @@ function Main() {
                       <img
                         alt="Midone Tailwind HTML Admin Template"
                         className="rounded-full"
-                        src={fakerData[0].photos[0]}
+                        src="#"
                       />
                     </div>
                     <div className="px-4 py-3 bg-slate-100 dark:bg-darkmode-400 text-slate-500 rounded-r-md rounded-t-md">
@@ -670,7 +670,7 @@ function Main() {
                       <img
                         alt="Midone Tailwind HTML Admin Template"
                         className="rounded-full"
-                        src={fakerData[1].photos[0]}
+                        src="#"
                       />
                     </div>
                   </div>
@@ -680,7 +680,7 @@ function Main() {
                       <img
                         alt="Midone Tailwind HTML Admin Template"
                         className="rounded-full"
-                        src={fakerData[0].photos[0]}
+                        src="#"
                       />
                     </div>
                     <div className="px-4 py-3 bg-slate-100 dark:bg-darkmode-400 text-slate-500 rounded-r-md rounded-t-md">
@@ -4913,7 +4913,7 @@ function Main() {
                   <div className="flex-none w-16 h-16 mx-auto overflow-hidden rounded-full image-fit">
                     <img
                       alt="Midone Tailwind HTML Admin Template"
-                      src={fakerData[0].photos[0]}
+                      src="#"
                     />
                   </div>
                   <div className="mt-3">
