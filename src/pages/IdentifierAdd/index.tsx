@@ -1,5 +1,5 @@
 import TomSelect from "../../base-components/TomSelect";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../base-components/Button";
 import { FormInput, FormLabel } from "../../base-components/Form";
@@ -11,13 +11,14 @@ import Lucide from "../../base-components/Lucide";
 import Notification from "../../base-components/Notification";
 import { useNotification } from "../../stores/hooks";
 import { mapObjectToId } from "../../utils/helper";
+import { useGetIdentifierNameAndId } from "../../stores/hooks";
 
 function Main({ content, identifier }: any) {
   const [name, setName] = useState("");
   const [categories, setCategories] = useState([""]);
   const [addIdentifier, { isLoading, isSuccess, isError }] =
     useAddIdentifierMutation();
-    const nameRef = useRef(name);
+
   const funcMap: any = {
     article: useGetArticlesQuery,
     product: useGetUsersQuery,
@@ -27,11 +28,13 @@ function Main({ content, identifier }: any) {
     pageStart: 0,
     pageLimit: -1,
   });
-  let addedIdentifierName = "";
+
+  //THIS IS HOW I KNOW IF I AM EDITING OR NOT
+  const {identifierName, identifierId} = useGetIdentifierNameAndId();
+  console.log(identifierName, identifierId)
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    addedIdentifierName = name;
 
     addIdentifier({
       name,
@@ -44,11 +47,11 @@ function Main({ content, identifier }: any) {
   };
 
 
+  const text = isSuccess ? "Successfully added" : "Error adding";
   const { notificationProps, validIcon, notification } = useNotification(
     isSuccess,
     isError,
-    identifier,
-    addedIdentifierName
+    text
   );
 
   if (isLoading || relatedDataIsLoading) {
@@ -74,10 +77,8 @@ function Main({ content, identifier }: any) {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-
                 className="w-full"
                 placeholder="Input text"
-                
               />
             </div>
             <div className="mt-3">

@@ -15,16 +15,15 @@ import Inbox from "../pages/Inbox";
 import FileManager from "../pages/FileManager";
 import PointOfSale from "../pages/PointOfSale";
 import Chat from "../pages/Chat";
-import Post from "../pages/Post";
+import ArticleAdd from "../pages/ArticleAdd";
 import Calendar from "../pages/Calendar";
-import CrudDataList from "../pages/CrudDataList";
-import IdentifierEdit from "../pages/IdentifierEdit";
+import IdentifierAdd from "../pages/IdentifierAdd";
 import Users from "../pages/Users";
 import Profile from "../pages/Profile";
 import WizardLayout1 from "../pages/WizardLayout1";
 import WizardLayout2 from "../pages/WizardLayout2";
 import WizardLayout3 from "../pages/WizardLayout3";
-import BlogLayout1 from "../pages/BlogLayout1";
+import Articles from "../pages/Articles";
 import PricingLayout1 from "../pages/PricingLayout1";
 import PricingLayout2 from "../pages/PricingLayout2";
 import InvoiceLayout1 from "../pages/InvoiceLayout1";
@@ -105,6 +104,7 @@ function Router() {
           path: "products/new",
           element: <AddProduct />,
         },
+        
         {
           path: "products",
           element: <ProductGrid />,
@@ -147,7 +147,7 @@ function Router() {
         },
         {
           path: "articles/new",
-          element: <Post content="article" identifiers={["categories", "tags"]} />,
+          element: <ArticleAdd content="article" identifiers={["categories", "tags"]} />,
         },
         {
           path: "calendar",
@@ -155,19 +155,35 @@ function Router() {
         },
         {
           path: "product-tags/new",
-          element: <IdentifierEdit content="product" identifier="tags" />,
+          element: <IdentifierAdd content="product" identifier="tags" />,
         },
         {
           path: "product-categories/new",
-          element: <IdentifierEdit content="product" identifier="categories" />,
+          element: <IdentifierAdd content="product" identifier="categories" />,
         },
         {
           path: "article-tags/new",
-          element: <IdentifierEdit content="article" identifier="tags" />,
+          element: <IdentifierAdd content="article" identifier="tags" />,
         },
         {
           path: "article-categories/new",
-          element: <IdentifierEdit content="article" identifier="categories" />,
+          element: <IdentifierAdd content="article" identifier="categories" />,
+        },
+        {
+          path: "product-tags/:name",
+          element: <IdentifierAdd content="product" identifier="tags" />,
+        },
+        {
+          path: "product-categories/:name",
+          element: <IdentifierAdd content="product" identifier="categories" />,
+        },
+        {
+          path: "article-tags/:name",
+          element: <IdentifierAdd content="article" identifier="tags" />,
+        },
+        {
+          path: "article-categories/:name",
+          element: <IdentifierAdd content="article" identifier="categories" />,
         },
         {
           path: "users",
@@ -191,7 +207,11 @@ function Router() {
         },
         {
           path: "articles",
-          element: <BlogLayout1 />,
+          element: <Articles content="article"/>,
+        },
+        {
+          path: "articles/:name",
+          element: <ArticleAdd content="article" identifiers={["categories", "tags"]}/>,
         },
         {
           path: "pricing-layout-1",

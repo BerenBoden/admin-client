@@ -1,19 +1,23 @@
 import { useGetIdentifiersQuery } from "../../stores/services/identifiers/identifiersSlice";
-import { FormInput, FormLabel, FormSwitch } from "../../base-components/Form";
+import { FormLabel} from "../../base-components/Form";
 import TomSelect from "../../base-components/TomSelect";
-import { useState } from "react";
 
 function Main({
   identifier,
   content,
   handleSelectedIdentifier,
+  setIdentifiers,
+  selectedIdentifier
 }: {
   identifier: string;
   content: string;
   handleSelectedIdentifier: any;
+  setIdentifiers: any;
+  selectedIdentifier: any;
 }) {
-  const [identifiers, setIdentifiers] = useState<any>([""]);
-  // console.log(identifiers)
+
+
+
   const { data, isLoading } = useGetIdentifiersQuery({
     pageStart: 0,
     pageLimit: -1,
@@ -31,14 +35,12 @@ function Main({
       </FormLabel>
       <TomSelect
         id="post-form-3"
-        value={identifiers}
+        value={selectedIdentifier[identifier]}
         onChange={(value) => {
           setIdentifiers(value);
           handleSelectedIdentifier(value, identifier);
         }
-      }
-        // getRef={(value) => console.log(value, 'sdg')}
-        
+      } 
         className="w-full"
         multiple
       >

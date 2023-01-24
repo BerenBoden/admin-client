@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Cookies } from "react-cookie";
+const SERVER_API = import.meta.env.VITE_NODE_ENV = 'production' ? import.meta.env.VITE_SERVER_API : 'http://localhost:5000';
 
 type FormData = {
   email: string;
@@ -9,7 +10,7 @@ const cookies = new Cookies();
 
 // Register user
 const register = async (userData: any): Promise<any> => {
-  const response = await axios.post(import.meta.env.VITE_TESTBACKEND_API, userData);
+  const response = await axios.post(SERVER_API, userData);
   const cookies = new Cookies();
 
   if (response.data) {
@@ -22,13 +23,13 @@ const register = async (userData: any): Promise<any> => {
 // Login user
 const login = async (formData: FormData): Promise<any> => {
   const response = await axios.post(
-    `${import.meta.env.VITE_TESTBACKEND_API}/api/authentication/login`,
+    `${SERVER_API}/api/authentication/login`,
     formData
   );
 
   const { token, ...user } = response.data;
 
-  if (response.data) {
+if (response.data) {
     cookies.set("user", JSON.stringify(user), { path: "/" });
     cookies.set("token", JSON.stringify(token), { path: "/" });
   }

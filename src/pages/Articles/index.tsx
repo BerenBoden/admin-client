@@ -1,5 +1,4 @@
-import _ from "lodash";
-import fakerData from "../../utils/faker";
+import { useState } from "react";
 import Button from "../../base-components/Button";
 import Pagination from "../../base-components/Pagination";
 import { FormInput, FormSelect } from "../../base-components/Form";
@@ -8,10 +7,15 @@ import Tippy from "../../base-components/Tippy";
 import { Menu } from "../../base-components/Headless";
 import { NavLink } from "react-router-dom";
 import { useGetArticlesQuery } from "../../stores/services/articles/articlesSlice";
+import { usePagination } from "../../stores/hooks";
+import { Link } from 'react-router-dom'
 
-function Main() {
-  const { data, isLoading } = useGetArticlesQuery({ pageStart: 0, pageLimit: -1 });
-  if (isLoading) {
+function Main({ content }: any) {
+  const [pageLimit, setPageLimit] = useState(10);
+  const { page, currentPages, handlePageChange, paginationIsLoading, data } =
+    usePagination(pageLimit, useGetArticlesQuery, { content });
+
+  if (paginationIsLoading) {
     return <div>Loading...</div>;
   }
 
@@ -24,7 +28,7 @@ function Main() {
           </Button>
         </NavLink>
         <div className="hidden mx-auto md:block text-slate-500">
-          Showing 1 to 7 of 6 entries
+          Showing 1 to {pageLimit} of {data.meta.pagination.total} entries
         </div>
         <div className="w-full mt-3 sm:w-auto sm:mt-0 sm:ml-auto md:ml-0">
           <div className="relative w-56 text-slate-500">
@@ -57,13 +61,13 @@ function Main() {
               </div>
               <div className="ml-3 mr-auto">
                 <a href="" className="font-medium">
-                  Firstname
+                  {attributes?.author}
                 </a>
                 <div className="flex text-slate-500 truncate text-xs mt-0.5">
                   <a className="inline-block truncate text-primary" href="">
                     {attributes.title}
                   </a>
-                  <span className="mx-1"></span> 2
+                  <span className="mx-1"></span> 
                 </div>
               </div>
               <Menu className="ml-3">
@@ -75,9 +79,11 @@ function Main() {
                   <Lucide icon="MoreVertical" className="w-5 h-5" />
                 </Menu.Button>
                 <Menu.Items className="w-40">
-                  <Menu.Item>
-                    <Lucide icon="Edit2" className="w-4 h-4 mr-2" /> Edit Post
-                  </Menu.Item>
+                  <Link to={`${attributes.title}?id=${id}`}>
+                    <Menu.Item>
+                      <Lucide icon="Edit2" className="w-4 h-4 mr-2" /> Edit Post
+                    </Menu.Item>
+                  </Link>
                   <Menu.Item>
                     <Lucide icon="Trash" className="w-4 h-4 mr-2" /> Delete Post
                   </Menu.Item>
@@ -89,7 +95,7 @@ function Main() {
                 <img
                   alt="Midone Tailwind HTML Admin Template"
                   className="rounded-md"
-                  src={`${import.meta.env.VITE_TESTSTRAPI_API}${
+                  src={`${import.meta.env.VITE_STRAPI_API}${
                     attributes.image_header.data.attributes.formats.thumbnail
                       .url
                   }`}
@@ -193,33 +199,41 @@ function Main() {
         ))}
         {/* END: Blog Layout */}
         {/* BEGIN: Pagination */}
+        {/* BEGIN: Pagination */}
         <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
           <Pagination className="w-full sm:w-auto sm:mr-auto">
-            <Pagination.Link>
+            <Pagination.Link handleClick={() => handlePageChange(page - 1)}>
               <Lucide icon="ChevronsLeft" className="w-4 h-4" />
             </Pagination.Link>
-            <Pagination.Link>
-              <Lucide icon="ChevronLeft" className="w-4 h-4" />
-            </Pagination.Link>
-            <Pagination.Link>...</Pagination.Link>
-            <Pagination.Link>1</Pagination.Link>
-            <Pagination.Link active>2</Pagination.Link>
-            <Pagination.Link>3</Pagination.Link>
-            <Pagination.Link>...</Pagination.Link>
-            <Pagination.Link>
-              <Lucide icon="ChevronRight" className="w-4 h-4" />
-            </Pagination.Link>
-            <Pagination.Link>
+            {currentPages.map((pageNumber) => (
+              <Pagination.Link
+                key={pageNumber}
+                className={
+                  page === pageNumber
+                    ? "!box font-medium dark:bg-darkmode-400"
+                    : ""
+                }
+              >
+                {pageNumber}
+              </Pagination.Link>
+            ))}
+            <Pagination.Link handleClick={() => handlePageChange(page + 1)}>
               <Lucide icon="ChevronsRight" className="w-4 h-4" />
             </Pagination.Link>
           </Pagination>
-          <FormSelect className="w-20 mt-3 !box sm:mt-0">
-            <option>10</option>
-            <option>25</option>
-            <option>35</option>
-            <option>50</option>
+
+          <FormSelect
+            className="w-20 mt-3 !box sm:mt-0"
+            value={pageLimit}
+            onChange={(event) => setPageLimit(Number(event.target.value))}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={35}>35</option>
+            <option value={50}>50</option>
           </FormSelect>
         </div>
+        {/* END: Pagination */}
         {/* END: Pagination */}
       </div>
     </>

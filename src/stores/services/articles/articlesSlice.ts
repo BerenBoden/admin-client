@@ -23,6 +23,28 @@ export const extendedApiSlice = api.injectEndpoints({
         ];
       },
     }),
+    getArticleById: builder.query({
+      query: ({ id }: any) => {
+        return {
+          url: `api/articles/${id}`,
+        };
+      },
+      providesTags: (result, error, arg) => {
+        return [{ type: "Articles", id: result.data.id }];
+      },
+    }),
+    updateArticle: builder.mutation({
+      query: ({formData, id}) => {
+        return {
+          url: `api/articles/${id}`,
+          method: "PUT",
+          body: formData,
+        };
+      },
+      invalidatesTags: (result: any, error: any) => {
+        return [{ type: "Articles", id: "LIST" }];
+      },
+    }),
     addArticle: builder.mutation({
       query: (data) => {
         return {
@@ -32,11 +54,15 @@ export const extendedApiSlice = api.injectEndpoints({
         };
       },
       invalidatesTags: (result: any, error: any) => {
-        console.log(result, error)
-        return [{ type: "Articles", id: "LIST" }]
-      }
+        return [{ type: "Articles", id: "LIST" }];
+      },
     }),
   }),
 });
 
-export const { useGetArticlesQuery, useAddArticleMutation } = extendedApiSlice;
+export const {
+  useGetArticlesQuery,
+  useAddArticleMutation,
+  useGetArticleByIdQuery,
+  useUpdateArticleMutation
+} = extendedApiSlice;

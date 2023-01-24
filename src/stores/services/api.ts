@@ -1,11 +1,12 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { Cookies } from "react-cookie";
 import { logout } from "../auth/authSlice";
+const SERVER_API = import.meta.env.VITE_NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_API : 'http://localhost:5000';
 
 const cookies = new Cookies();
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${import.meta.env.VITE_TESTBACKEND_API}`,
+  baseUrl: SERVER_API,
   prepareHeaders: (headers: Headers, api) => {
     if (api.endpoint !== "getCategories") {
       const token = cookies.get("token");

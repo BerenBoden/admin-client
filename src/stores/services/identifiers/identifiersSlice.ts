@@ -14,6 +14,7 @@ export const extendedApiSlice = api.injectEndpoints({
         content: string;
         identifier: string;
       }) => {
+        console.log(content, identifier)
         if (typeof pageStart !== "boolean") {
           pageStart = String(pageStart);
           pageLimit = String(pageLimit);
