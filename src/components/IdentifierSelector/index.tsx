@@ -1,21 +1,23 @@
 import { useGetIdentifiersQuery } from "../../stores/services/identifiers/identifiersSlice";
 import { FormLabel} from "../../base-components/Form";
 import TomSelect from "../../base-components/TomSelect";
+import pluralize from "pluralize";
 
 function Main({
+  errors,
   identifier,
   content,
   handleSelectedIdentifier,
   setIdentifiers,
   selectedIdentifier
 }: {
+  errors: any;
   identifier: string;
   content: string;
   handleSelectedIdentifier: any;
   setIdentifiers: any;
   selectedIdentifier: any;
 }) {
-
 
 
   const { data, isLoading } = useGetIdentifiersQuery({
@@ -30,8 +32,8 @@ function Main({
   }
   return (
     <div className="mt-3">
-      <FormLabel htmlFor="post-form-3" className="capitalize">
-        {identifier}
+      <FormLabel htmlFor="post-form-3" className={`${errors[`article_${identifier}`] === false ? "text-red-500" : `capitalize`}`}>
+        {errors[`article_${identifier}`] === false ? `Please select at least one ${pluralize.singular(identifier)}` : `${identifier}`}
       </FormLabel>
       <TomSelect
         id="post-form-3"
@@ -41,7 +43,7 @@ function Main({
           handleSelectedIdentifier(value, identifier);
         }
       } 
-        className="w-full"
+        className={`w-full ${errors[`article_${identifier}`] === false && "border-red-500"}`}
         multiple
       >
         {data &&

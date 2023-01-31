@@ -8,7 +8,7 @@ import { useGetUsersQuery } from "../../stores/services/users/usersSlice";
 import {
   useAddArticleMutation,
   useGetArticleByIdQuery,
-  useUpdateArticleMutation
+  useUpdateArticleMutation,
 } from "../../stores/services/articles/articlesSlice";
 import { useNotification } from "../../stores/hooks";
 import ArticleInfo from "./ArticleInfo";
@@ -23,10 +23,9 @@ function Main({ content, identifiers }: any) {
     categories: [""],
     tags: [""],
   });
-  const [identifiersData, setIdentifiers] = useState<any>([])
+  const [identifiersData, setIdentifiers] = useState<any>([]);
 
   const handleSelectedIdentifier = (identifierData: any, identifier: any) => {
-    console.log(identifierData, identifier)
     setSelectedIdentifier((prevState) => {
       return {
         ...prevState,
@@ -36,8 +35,8 @@ function Main({ content, identifiers }: any) {
   };
 
   const { identifierName, identifierId } = useGetIdentifierNameAndId();
-  const {data, isLoading} = useGetArticleByIdQuery({id: identifierId});
-
+  const { data, isLoading } = useGetArticleByIdQuery({ id: identifierId });
+  const [errors, setErrors] = useState({});
   const [loaded, setLoaded] = useState<any>(null);
   const [title, setTitle] = useState<any>("");
   const [salesReportFilter, setSalesReportFilter] = useState<string>();
@@ -46,19 +45,30 @@ function Main({ content, identifiers }: any) {
   const [image, setImage] = useState<any>();
   const [imageHeader, setImageHeader] = useState<any>();
 
-
   const [addArticle, { isLoading: addArticleIsLoading, isSuccess, isError }] =
     useAddArticleMutation();
-    
-  const [updateArticle, { isLoading: updateArticleIsLoading, isSuccess: updateIsSuccess, isError: updateIsError }] = useUpdateArticleMutation();
 
-  const { data: usersData, isLoading: getUsersIsLoading } =
-    useGetUsersQuery("Users");
+  const [
+    updateArticle,
+    {
+      isLoading: updateArticleIsLoading,
+      isSuccess: updateIsSuccess,
+      isError: updateIsError,
+    },
+  ] = useUpdateArticleMutation();
 
-  const text = isSuccess ? "Successfully added" : "Error adding";
+  const { data: usersData } = useGetUsersQuery("Users");
+
+  const text = `${
+    isSuccess
+      ? "Successfully added"
+      : "Error adding" || updateIsSuccess
+      ? "Successfully updated"
+      : "Error updating"
+  }`;
   const { notificationProps, validIcon, notification } = useNotification(
-    isSuccess,
-    isError,
+    isSuccess || updateIsSuccess,
+    isError || updateIsError,
     text
   );
 
@@ -78,32 +88,80 @@ function Main({ content, identifiers }: any) {
     }
   };
 
+  // const handleErrorChange = () => {
+  //   const errors = validateContent(title, editorData, author, imageHeader, selectedIdentifier.categories, selectedIdentifier.tags)
+  //   if(errors){
+  //     setErrors(errors);
+  //     return;
+  //   }
+  // }
+
+  const validateContent = (
+    title: string,
+    content: any,
+    author: string,
+    imageHeader: any,
+    article_categories: any,
+    article_tags: any
+  ) => {
+    const errors = {
+      title: !!title,
+      content: !!content,
+      author: !!author,
+      imageHeader: !!imageHeader || !!image,
+      article_categories: article_categories[0] !== "",
+      article_tags: article_tags[0] !== "",
+    };
+
+    return errors;
+  };
+
   const handleContentSubmit = async (event: React.UIEvent) => {
     try {
       event.preventDefault();
+      const errors = validateContent(
+        title,
+        editorData,
+        author,
+        imageHeader,
+        selectedIdentifier.categories,
+        selectedIdentifier.tags
+      );
+      if (errors) {
+        setErrors(errors);
+        let hasError = false;
+        Object.entries(errors).forEach(([key, value]) => {
+          if (!value) {
+            hasError = true;
+          }
+        });
+        if (hasError) {
+          return;
+        }
+      }
       const data = {
         title,
         content: editorData,
         author,
         slug: slugify(title),
-        blog_categories: mapObjectToId(selectedIdentifier.categories),
-        blog_tags: mapObjectToId(selectedIdentifier.tags),
+        article_categories: mapObjectToId(selectedIdentifier.categories),
+        article_tags: mapObjectToId(selectedIdentifier.tags),
       };
       const formData = new FormData();
       formData.append("data", JSON.stringify(data));
       formData.append("image_header", imageHeader);
       formData.append("Content-Type", "multipart/form-data");
-      if(!identifierId){
+      if (!identifierId) {
         addArticle(formData);
         return;
       }
-      updateArticle({formData, id: identifierId});
+      updateArticle({ formData, id: identifierId });
     } catch (err) {
       console.log(err);
     }
-  };  
-  
-  if (addArticleIsLoading) {
+  };
+
+  if (addArticleIsLoading || updateArticleIsLoading) {
     return <div>Loading...</div>;
   }
 
@@ -111,12 +169,24 @@ function Main({ content, identifiers }: any) {
     setTitle(data.data.attributes.title);
     setAuthor(data.data.attributes.author);
     setEditorData(data.data.attributes.content);
-    setImage(`${import.meta.env.VITE_STRAPI_API}${data.data.attributes.image_header.data.attributes.formats.thumbnail.url}`);
-    handleSelectedIdentifier(data.data.attributes.article_tags.data.map(({id}: any) => `${id}`), 'tags');  
-    handleSelectedIdentifier(data.data.attributes.article_categories.data.map(({id}: any) => `${id}`), 'categories'); 
+    setImage(
+      `${import.meta.env.VITE_STRAPI_API}${
+        data.data.attributes.image_header.data.attributes.formats.thumbnail.url
+      }`
+    );
+    handleSelectedIdentifier(
+      data.data.attributes.article_tags.data.map(({ id }: any) => `${id}`),
+      "tags"
+    );
+    handleSelectedIdentifier(
+      data.data.attributes.article_categories.data.map(
+        ({ id }: any) => `${id}`
+      ),
+      "categories"
+    );
     setLoaded(true);
   }
-  
+
   return (
     <>
       <div className="flex flex-col items-center mt-8 intro-y sm:flex-row">
@@ -147,6 +217,7 @@ function Main({ content, identifiers }: any) {
       <div className="grid grid-cols-12 gap-5 mt-5 intro-y">
         {/* BEGIN: Post Content */}
         <ArticleContent
+          errors={errors}
           title={title}
           setTitle={setTitle}
           editorData={editorData}
@@ -157,6 +228,7 @@ function Main({ content, identifiers }: any) {
         {/* END: Post Content */}
         {/* BEGIN: Post Info */}
         <ArticleInfo
+          errors={errors}
           author={author}
           setAuthor={setAuthor}
           usersData={usersData}

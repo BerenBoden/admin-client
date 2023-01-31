@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Button from "../../base-components/Button";
 import Pagination from "../../base-components/Pagination";
 import { FormInput, FormSelect } from "../../base-components/Form";
@@ -6,16 +6,48 @@ import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import { Menu } from "../../base-components/Headless";
 import { NavLink } from "react-router-dom";
-import { useGetArticlesQuery } from "../../stores/services/articles/articlesSlice";
+import pluralize from "pluralize";
+import {
+  useGetArticlesQuery,
+  useDeleteArticleMutation,
+} from "../../stores/services/articles/articlesSlice";
 import { usePagination } from "../../stores/hooks";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import Notification from "../../base-components/Notification";
+import { useNotification } from "../../stores/hooks";
+import Modal from "../../components/Modal";
 
 function Main({ content }: any) {
   const [pageLimit, setPageLimit] = useState(10);
   const { page, currentPages, handlePageChange, paginationIsLoading, data } =
     usePagination(pageLimit, useGetArticlesQuery, { content });
+  const [confirmationModal, setConfirmationModal] = useState(false);
+  const idRef = useRef(null);
+  const [deleteName, setDeleteName] = useState("");
 
-  if (paginationIsLoading) {
+  const [deleteArticle, {isSuccess: deleteIsSuccess, isError: deleteIsError, isLoading: deleteIsLoading}] = useDeleteArticleMutation();
+
+  const text = deleteIsSuccess
+    ? `Successfully deleted article "${deleteName}"`
+    : "There was an error, please try again.";
+  const { notificationProps, validIcon, notification } = useNotification(
+    deleteIsSuccess,
+    deleteIsError,
+    text
+  );
+
+  const openModal = (id: any, name: string) => {
+    idRef.current = id;
+    setDeleteName(name);
+    setConfirmationModal(!confirmationModal);
+  };
+
+  const handleDelete = async () => {
+    setConfirmationModal(false);
+    deleteArticle({ id: idRef.current });
+  };
+
+  if (paginationIsLoading || deleteIsLoading) {
     return <div>Loading...</div>;
   }
 
@@ -46,7 +78,7 @@ function Main({ content }: any) {
       </div>
       <div className="grid grid-cols-12 gap-6 mt-5 intro-y">
         {/* BEGIN: Blog Layout */}
-        {data.data.map(({ id, attributes }: any, i: number) => (
+        {data.data.map(({ id, attributes }: any) => (
           <div
             key={id}
             className="col-span-12 intro-y md:col-span-6 xl:col-span-4 box"
@@ -67,7 +99,7 @@ function Main({ content }: any) {
                   <a className="inline-block truncate text-primary" href="">
                     {attributes.title}
                   </a>
-                  <span className="mx-1"></span> 
+                  <span className="mx-1"></span>
                 </div>
               </div>
               <Menu className="ml-3">
@@ -84,7 +116,9 @@ function Main({ content }: any) {
                       <Lucide icon="Edit2" className="w-4 h-4 mr-2" /> Edit Post
                     </Menu.Item>
                   </Link>
-                  <Menu.Item>
+                  <Menu.Item onClick={() =>
+                            openModal(id, attributes.title)
+                          }>
                     <Lucide icon="Trash" className="w-4 h-4 mr-2" /> Delete Post
                   </Menu.Item>
                 </Menu.Items>
@@ -236,6 +270,34 @@ function Main({ content }: any) {
         {/* END: Pagination */}
         {/* END: Pagination */}
       </div>
+      {/* BEGIN: Delete Confirmation Modal */}
+      <div className="text-center">
+        {/* BEGIN: Notification Content */}
+        <Notification
+          getRef={(el) => {
+            notification.current = el;
+          }}
+          className="flex items-center"
+        >
+          <Lucide icon={validIcon} className={notificationProps.className} />
+          <div className="ml-4 mr-4">
+            <div className="font-medium">{notificationProps.text}</div>
+          </div>
+        </Notification>
+      </div>
+      {confirmationModal && (
+        <Modal
+          icon="XCircle"
+          question={`Delete article "${deleteName}"?`}
+          buttonText="Delete"
+          buttonType="danger"
+          information={`Are you sure you want to delete "${deleteName}". This can not be undone.`}
+          handleSubmit={handleDelete}
+          confirmationModal={confirmationModal}
+          setConfirmationModal={setConfirmationModal}
+        />
+      )}
+      {/* END: Delete Confirmation Modal */}
     </>
   );
 }

@@ -5,15 +5,30 @@ import { Tab } from "../../../base-components/Headless";
 import Tippy from "../../../base-components/Tippy";
 import Lucide from "../../../base-components/Lucide";
 
-function Main({title, setTitle, editorData, setEditorData, image, handleImageChange}: any) {
+function Main({
+  errors,
+  title,
+  setTitle,
+  editorData,
+  setEditorData,
+  image,
+  handleImageChange,
+}: any) {
   return (
     <div className="col-span-12 intro-y lg:col-span-8">
+      {errors.title === false && (
+        <FormLabel className="text-red-500">Title must have a value.</FormLabel>
+      )}
       <FormInput
         type="text"
-        className="px-4 py-3 pr-10 intro-y !box"
+        className={`px-4 py-3 pr-10 intro-y ${
+          errors.title === false && "border-red-500"
+        }`}
         placeholder="Title"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e) => {
+          setTitle(e.target.value);
+        }}
       />
       <Tab.Group className="mt-5 overflow-hidden intro-y box">
         <Tab.List className="flex-col border-transparent dark:border-transparent sm:flex-row bg-slate-200 dark:bg-darkmode-800">
@@ -87,7 +102,16 @@ function Main({title, setTitle, editorData, setEditorData, image, handleImageCha
         </Tab.List>
         <Tab.Panels>
           <Tab.Panel className="p-5">
-            <div className="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400">
+            {errors.content === false && (
+              <FormLabel className="text-red-500">
+                Content must have a value.
+              </FormLabel>
+            )}
+            <div
+              className={`p-5 border rounded-md border-slate-200/60 dark:border-darkmode-500 ${
+                errors.content === false && "border-red-500"
+              }`}
+            >
               <div className="flex items-center pb-5 font-medium border-b border-slate-200/60 dark:border-darkmode-400">
                 <Lucide icon="ChevronDown" className="w-4 h-4 mr-2" /> Text
                 Content
@@ -111,8 +135,18 @@ function Main({title, setTitle, editorData, setEditorData, image, handleImageCha
                   />
                 </div>
                 <div className="mt-3">
-                  <FormLabel>Upload Image</FormLabel>
-                  <div className="pt-4 border-2 border-dashed rounded-md dark:border-darkmode-400">
+                  {errors.imageHeader === false ? (
+                    <FormLabel className="text-red-500">
+                      Image must have a value.
+                    </FormLabel>
+                  ) : (
+                    <FormLabel>Upload Image</FormLabel>
+                  )}
+                  <div
+                    className={`pt-4 border-2 border-dashed rounded-md dark:border-darkmode-500 ${
+                      errors.imageHeader === false && "border-red-500"
+                    }`}
+                  >
                     <div className="flex flex-wrap px-4">
                       {image && <img src={image} alt="Uploaded Image" />}
                     </div>

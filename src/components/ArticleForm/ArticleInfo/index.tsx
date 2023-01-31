@@ -5,7 +5,7 @@ import IdentifierSelector from "../../../components/IdentifierSelector";
 import Button from "../../../base-components/Button";
 import Lucide from "../../../base-components/Lucide";
 
-function Main({author, setAuthor, usersData, salesReportFilter, setSalesReportFilter, identifiers, handleSelectedIdentifier, content, setIdentifiers, selectedIdentifier }: any) {
+function Main({errors, author, setAuthor, usersData, salesReportFilter, setSalesReportFilter, identifiers, handleSelectedIdentifier, content, setIdentifiers, selectedIdentifier }: any) {
     return (
     <div className="col-span-12 lg:col-span-4">
       <div className="p-5 intro-y box">
@@ -68,6 +68,7 @@ function Main({author, setAuthor, usersData, salesReportFilter, setSalesReportFi
         {identifiers.map((identifier: any) => {
           return (
             <IdentifierSelector
+              errors={errors}
               identifier={identifier}
               content={content}
               handleSelectedIdentifier={handleSelectedIdentifier}
