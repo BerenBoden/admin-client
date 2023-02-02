@@ -6,12 +6,21 @@ import Pagination from "../../base-components/Pagination";
 import { FormInput, FormSelect } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
+import { usePagination } from "../../stores/hooks";
+import { useGetProductsQuery } from "../../stores/services/products/productsSlice";
 
-function Main() {
+function Main({ content }: any) {
+  const [pageLimit, setPageLimit] = useState(10);
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
   const deleteButtonRef = useRef(null);
+  const { page, currentPages, handlePageChange, paginationIsLoading, data } =
+    usePagination(pageLimit, useGetProductsQuery, { content });
 
+  console.log(data)
+  if(paginationIsLoading) {
+    return <div>Loading...</div>
+  }
   return (
     <>
       <h2 className="mt-10 text-lg font-medium intro-y">Product Grid</h2>
@@ -43,7 +52,7 @@ function Main() {
             </Menu.Items>
           </Menu>
           <div className="hidden mx-auto md:block text-slate-500">
-            Showing 1 to 10 of 150 entries
+            Showing 1 to {pageLimit} of {data.meta.pagination.total} entries
           </div>
           <div className="w-full mt-3 sm:w-auto sm:mt-0 sm:ml-auto md:ml-0">
             <div className="relative w-56 text-slate-500">
@@ -60,9 +69,9 @@ function Main() {
           </div>
         </div>
         {/* BEGIN: Users Layout */}
-        {_.take(fakerData, 12).map((faker, fakerKey) => (
+        {data.data.map(({id, attributes}: any) => (
           <div
-            key={fakerKey}
+            key={id}
             className="col-span-12 intro-y md:col-span-6 lg:col-span-4 xl:col-span-3"
           >
             <div className="box">
@@ -71,36 +80,35 @@ function Main() {
                   <img
                     alt="Midone - HTML Admin Template"
                     className="rounded-md"
-                    src={faker.images[0]}
+                    src={`${import.meta.env.VITE_STRAPI_API}${
+                      attributes?.image_header.data.attributes.formats.thumbnail
+                        .url
+                    }`}
                   />
-                  {faker.trueFalse[0] && (
-                    <span className="absolute top-0 z-10 px-2 py-1 m-5 text-xs text-white rounded bg-pending/80">
-                      Featured
-                    </span>
-                  )}
+
                   <div className="absolute bottom-0 z-10 px-5 pb-6 text-white">
                     <a href="" className="block text-base font-medium">
-                      {faker.products[0].name}
+                      {attributes.title}
                     </a>
                     <span className="mt-3 text-xs text-white/90">
-                      {faker.products[0].category}
+                      {/* {faker.products[0].category} */}
                     </span>
                   </div>
                 </div>
                 <div className="mt-5 text-slate-600 dark:text-slate-500">
                   <div className="flex items-center">
                     <Lucide icon="Link" className="w-4 h-4 mr-2" /> Price: $
-                    {faker.totals[0]}
+                    {attributes.price}
                   </div>
                   <div className="flex items-center mt-2">
                     <Lucide icon="Layers" className="w-4 h-4 mr-2" /> Remaining
                     Stock:
-                    {faker.stocks[0]}
+                    {/* {faker.stocks[0]} */}
                   </div>
                   <div className="flex items-center mt-2">
                     <Lucide icon="CheckSquare" className="w-4 h-4 mr-2" />{" "}
                     Status:
-                    {faker.trueFalse[0] ? "Active" : "Inactive"}
+                    {/* {faker.trueFalse[0] ? "Active" : "Inactive"} */}
                   </div>
                 </div>
               </div>
@@ -129,29 +137,35 @@ function Main() {
         {/* BEGIN: Pagination */}
         <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
           <Pagination className="w-full sm:w-auto sm:mr-auto">
-            <Pagination.Link>
+            <Pagination.Link handleClick={() => handlePageChange(page - 1)}>
               <Lucide icon="ChevronsLeft" className="w-4 h-4" />
             </Pagination.Link>
-            <Pagination.Link>
-              <Lucide icon="ChevronLeft" className="w-4 h-4" />
-            </Pagination.Link>
-            <Pagination.Link>...</Pagination.Link>
-            <Pagination.Link>1</Pagination.Link>
-            <Pagination.Link active>2</Pagination.Link>
-            <Pagination.Link>3</Pagination.Link>
-            <Pagination.Link>...</Pagination.Link>
-            <Pagination.Link>
-              <Lucide icon="ChevronRight" className="w-4 h-4" />
-            </Pagination.Link>
-            <Pagination.Link>
+            {currentPages.map((pageNumber) => (
+              <Pagination.Link
+                key={pageNumber}
+                className={
+                  page === pageNumber
+                    ? "!box font-medium dark:bg-darkmode-400"
+                    : ""
+                }
+              >
+                {pageNumber}
+              </Pagination.Link>
+            ))}
+            <Pagination.Link handleClick={() => handlePageChange(page + 1)}>
               <Lucide icon="ChevronsRight" className="w-4 h-4" />
             </Pagination.Link>
           </Pagination>
-          <FormSelect className="w-20 mt-3 !box sm:mt-0">
-            <option>10</option>
-            <option>25</option>
-            <option>35</option>
-            <option>50</option>
+
+          <FormSelect
+            className="w-20 mt-3 !box sm:mt-0"
+            value={pageLimit}
+            onChange={(event) => setPageLimit(Number(event.target.value))}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={35}>35</option>
+            <option value={50}>50</option>
           </FormSelect>
         </div>
         {/* END: Pagination */}

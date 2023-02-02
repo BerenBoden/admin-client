@@ -4,9 +4,13 @@ import { Link } from "react-router-dom";
 import Button from "../../base-components/Button";
 import { FormInput, FormLabel } from "../../base-components/Form";
 import pluralize from "pluralize";
-import { useAddIdentifierMutation } from "../../stores/services/identifiers/identifiersSlice";
+import {
+  useAddIdentifierMutation,
+  useGetIdentifierByIdQuery,
+  useUpdateIdentifierMutation,
+} from "../../stores/services/identifiers/identifiersSlice";
 import { useGetArticlesQuery } from "../../stores/services/articles/articlesSlice";
-import { useGetUsersQuery } from "../../stores/services/users/usersSlice";
+import { useGetProductsQuery } from "../../stores/services/products/productsSlice";
 import Lucide from "../../base-components/Lucide";
 import Notification from "../../base-components/Notification";
 import { useNotification } from "../../stores/hooks";
@@ -15,46 +19,78 @@ import { useGetIdentifierNameAndId } from "../../stores/hooks";
 
 function Main({ content, identifier }: any) {
   const [name, setName] = useState("");
+  const [loaded, setLoaded] = useState(false);
   const [categories, setCategories] = useState([""]);
-  const [addIdentifier, { isLoading, isSuccess, isError }] =
+  const [addIdentifier, { isLoading: addedIsLoading, isSuccess: addedIsSuccess, isError: addedIsError }] =
     useAddIdentifierMutation();
+  const [
+    updateIdentifier,
+    {
+      isLoading: updateIsLoading,
+      isSuccess: updateIsSuccess,
+      isError: updateIsError,
+    },
+  ] = useUpdateIdentifierMutation();
 
   const funcMap: any = {
     article: useGetArticlesQuery,
-    product: useGetUsersQuery,
+    product: useGetProductsQuery,
   };
+
   const funcToUse: any = funcMap[content];
   const { data, isLoading: relatedDataIsLoading } = funcToUse({
     pageStart: 0,
     pageLimit: -1,
   });
 
-  //THIS IS HOW I KNOW IF I AM EDITING OR NOT
-  const {identifierName, identifierId} = useGetIdentifierNameAndId();
-  console.log(identifierName, identifierId)
-
+  const { identifierName, identifierId } = useGetIdentifierNameAndId();
+  const { data: identifierData, isLoading: identifierDataIsLoading } =
+    useGetIdentifierByIdQuery({ id: identifierId, content, identifier });
+  // console.log()
+  if (!loaded && identifierData) {
+    setName(identifierData.data.attributes.name);
+    setCategories(
+      identifierData.data.attributes[`${pluralize(content)}`].data.map(
+        ({ id }: any) => id
+      )
+    );
+    setLoaded(true);
+  }
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
-    addIdentifier({
+    if (!identifierId) {
+      console.log('dfkd')
+      addIdentifier({
+        name,
+        content,
+        identifier,
+        related: mapObjectToId(categories),
+      });
+      setName("");
+      setCategories([""]);
+      return;
+    }
+    updateIdentifier({
+      id: identifierId,
       name,
       content,
       identifier,
       related: mapObjectToId(categories),
     });
-    setName("");
-    setCategories([""]);
   };
 
+  const addedText = addedIsSuccess ? "Successfully added" : "Error adding";
+  const updatedText = updateIsSuccess ? "Successfully updated" : "Error updating";
+  const result = identifierId ? updatedText : addedText;
 
-  const text = isSuccess ? "Successfully added" : "Error adding";
   const { notificationProps, validIcon, notification } = useNotification(
-    isSuccess,
-    isError,
-    text
+    addedIsSuccess || updateIsSuccess,
+    addedIsError || updateIsError,
+    result
   );
 
-  if (isLoading || relatedDataIsLoading) {
+
+  if (addedIsLoading || relatedDataIsLoading || updateIsLoading) {
     return <div>Loading...</div>;
   }
 
@@ -120,7 +156,7 @@ function Main({ content, identifier }: any) {
       </form>
       <Link to={`/${content}-${identifier}`}>
         <Button type="button" variant="primary" className="w-24 mt-4">
-          Cancel
+          Go Back
         </Button>
       </Link>
       <div className="text-center">

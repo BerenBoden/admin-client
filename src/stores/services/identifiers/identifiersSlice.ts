@@ -42,6 +42,34 @@ export const extendedApiSlice = api.injectEndpoints({
         ];
       },
     }),
+    getIdentifierById: builder.query({
+      query: ({
+        id,
+        content,
+        identifier,
+      }: {
+        id: any;
+        content: string;
+        identifier: string;
+      }) => {
+        tag = String(
+          identifier
+            .split("")
+            .map((el, i) => (i === 0 ? el[i].toUpperCase() : el))
+            .join("")
+        );
+        return {
+          url: `api/identifiers/${id}?content=${content}&identifier=${identifier}`,
+        };
+      },
+      providesTags: (result, error, arg) => {
+        if (tag === "Tags" || tag === "Categories") {
+          return [{ type: `${tag}` as const, id: result.data.id }];
+        } else {
+          return [];
+        }
+      },
+    }),
     deleteIdentifier: builder.mutation({
       query: ({
         id,
@@ -67,6 +95,34 @@ export const extendedApiSlice = api.injectEndpoints({
           method: "DELETE",
           body: id,
         };
+      },
+      invalidatesTags: (result: any, error: any, { id }: any) => {
+        if (tag === "Tags" || tag === "Categories") {
+          return [{ type: `${tag}` as const, id }];
+        } else {
+          return [];
+        }
+      },
+    }),
+    updateIdentifier: builder.mutation({
+      query: ({
+        id,
+        name,
+        content,
+        identifier,
+        related
+      }: any) => {
+        tag = String(
+          identifier
+            .split("")
+            .map((el: any, i: any) => (i === 0 ? el[i].toUpperCase() : el))
+            .join("")
+        )
+        return {
+          url: `api/identifiers/${id}?content=${content}&identifier=${identifier}`,
+          method: "PUT",
+          body: { name: name, related: related },
+        }
       },
       invalidatesTags: (result: any, error: any, { id }: any) => {
         if (tag === "Tags" || tag === "Categories") {
@@ -105,7 +161,6 @@ export const extendedApiSlice = api.injectEndpoints({
         };
       },
       invalidatesTags: (result: any, error: any) => {
-        console.log(result, error, tag);
         if (tag === "Tags" || tag === "Categories") {
           return [{ type: `${tag}` as const, id: "LIST" }];
         } else {
@@ -118,6 +173,8 @@ export const extendedApiSlice = api.injectEndpoints({
 
 export const {
   useGetIdentifiersQuery,
+  useGetIdentifierByIdQuery,
   useDeleteIdentifierMutation,
   useAddIdentifierMutation,
+  useUpdateIdentifierMutation,
 } = extendedApiSlice;

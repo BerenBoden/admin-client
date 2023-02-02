@@ -47,6 +47,11 @@ const initialState: SideMenuState = {
         },
         {
           icon: "Activity",
+          pathname: "/coupons",
+          title: "Coupons",
+        },
+        {
+          icon: "Activity",
           pathname: "/sellers",
           title: "Sellers",
         },
@@ -86,7 +91,7 @@ const initialState: SideMenuState = {
           pathname: "/analytics",
           title: "Analytics",
         },
-      ]
+      ],
     },
     {
       icon: "Inbox",
@@ -198,7 +203,6 @@ const initialState: SideMenuState = {
     //     },
     //   ],
     // },
-    
   ],
 };
 

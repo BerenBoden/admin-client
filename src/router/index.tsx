@@ -4,8 +4,8 @@ import DashboardOverview2 from "../pages/DashboardOverview2";
 import DashboardOverview3 from "../pages/DashboardOverview3";
 import DashboardOverview4 from "../pages/DashboardOverview4";
 import Identifiers from "../pages/Identifiers";
-import AddProduct from "../pages/AddProduct";
-import ProductGrid from "../pages/ProductGrid";
+import ProductAdd from "../pages/ProductAdd";
+import Products from "../pages/Products";
 import TransactionList from "../pages/TransactionList";
 import TransactionDetail from "../pages/TransactionDetail";
 import SellerList from "../pages/SellerList";
@@ -102,12 +102,12 @@ function Router() {
         },
         {
           path: "products/new",
-          element: <AddProduct />,
+          element: <ProductAdd />,
         },
         
         {
           path: "products",
-          element: <ProductGrid />,
+          element: <Products content="products"/>,
         },
         {
           path: "transaction-list",
