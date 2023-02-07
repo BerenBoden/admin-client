@@ -87,6 +87,8 @@ function Main({ content, identifiers }: any) {
       }
     }
   };
+  console.log("image", image);
+  
 
   // const handleErrorChange = () => {
   //   const errors = validateContent(title, editorData, author, imageHeader, selectedIdentifier.categories, selectedIdentifier.tags)

@@ -110,19 +110,26 @@ export const extendedApiSlice = api.injectEndpoints({
         name,
         content,
         identifier,
-        related
+        slug,
+        related,
+        meta_description,
       }: any) => {
         tag = String(
           identifier
             .split("")
             .map((el: any, i: any) => (i === 0 ? el[i].toUpperCase() : el))
             .join("")
-        )
+        );
         return {
           url: `api/identifiers/${id}?content=${content}&identifier=${identifier}`,
           method: "PUT",
-          body: { name: name, related: related },
-        }
+          body: {
+            name: name,
+            related: related,
+            slug,
+            meta_description: meta_description,
+          },
+        };
       },
       invalidatesTags: (result: any, error: any, { id }: any) => {
         if (tag === "Tags" || tag === "Categories") {
@@ -137,11 +144,15 @@ export const extendedApiSlice = api.injectEndpoints({
         name,
         content,
         identifier,
+        meta_description,
+        slug,
         related,
       }: {
         name: string;
         content: string;
         identifier: string;
+        meta_description: string;
+        slug: string;
         related: any;
       }) => {
         tag = String(
@@ -157,7 +168,12 @@ export const extendedApiSlice = api.injectEndpoints({
               : ""
           }`,
           method: "POST",
-          body: { name: name, related: related },
+          body: {
+            name: name,
+            slug: slug,
+            related: related,
+            meta_description: meta_description,
+          },
         };
       },
       invalidatesTags: (result: any, error: any) => {

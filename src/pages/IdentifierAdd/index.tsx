@@ -2,8 +2,9 @@ import TomSelect from "../../base-components/TomSelect";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../base-components/Button";
-import { FormInput, FormLabel } from "../../base-components/Form";
+import { FormInput, FormLabel, FormTextarea } from "../../base-components/Form";
 import pluralize from "pluralize";
+import { slugify } from "../.././utils/helper";
 import {
   useAddIdentifierMutation,
   useGetIdentifierByIdQuery,
@@ -21,8 +22,15 @@ function Main({ content, identifier }: any) {
   const [name, setName] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [categories, setCategories] = useState([""]);
-  const [addIdentifier, { isLoading: addedIsLoading, isSuccess: addedIsSuccess, isError: addedIsError }] =
-    useAddIdentifierMutation();
+  const [meta_description, setMetaDescription] = useState("");
+  const [
+    addIdentifier,
+    {
+      isLoading: addedIsLoading,
+      isSuccess: addedIsSuccess,
+      isError: addedIsError,
+    },
+  ] = useAddIdentifierMutation();
   const [
     updateIdentifier,
     {
@@ -49,38 +57,47 @@ function Main({ content, identifier }: any) {
   // console.log()
   if (!loaded && identifierData) {
     setName(identifierData.data.attributes.name);
+    console.log(identifierData.data)
     setCategories(
-      identifierData.data.attributes[`${pluralize(content)}`].data.map(
+      identifierData.data.attributes[`category_${pluralize(content)}`].data.map(
         ({ id }: any) => id
       )
     );
+    setMetaDescription(identifierData.data.attributes.meta_description)
     setLoaded(true);
   }
   const handleSubmit = (e: any) => {
     e.preventDefault();
     if (!identifierId) {
-      console.log('dfkd')
       addIdentifier({
         name,
         content,
         identifier,
+        meta_description,
+        slug: slugify(name),
         related: mapObjectToId(categories),
       });
+      setMetaDescription("")
       setName("");
       setCategories([""]);
       return;
     }
+    console.log(slugify(name))
     updateIdentifier({
       id: identifierId,
       name,
       content,
       identifier,
+      meta_description,
+      slug: slugify(name),
       related: mapObjectToId(categories),
     });
   };
 
   const addedText = addedIsSuccess ? "Successfully added" : "Error adding";
-  const updatedText = updateIsSuccess ? "Successfully updated" : "Error updating";
+  const updatedText = updateIsSuccess
+    ? "Successfully updated"
+    : "Error updating";
   const result = identifierId ? updatedText : addedText;
 
   const { notificationProps, validIcon, notification } = useNotification(
@@ -88,7 +105,6 @@ function Main({ content, identifier }: any) {
     addedIsError || updateIsError,
     result
   );
-
 
   if (addedIsLoading || relatedDataIsLoading || updateIsLoading) {
     return <div>Loading...</div>;
@@ -113,6 +129,18 @@ function Main({ content, identifier }: any) {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                className="w-full"
+                placeholder="Input text"
+              />
+            </div>
+            <div>
+              <FormLabel htmlFor="crud-form-1" className="capitalize mt-3">
+                Meta description:
+              </FormLabel>
+              <FormTextarea
+                id="crud-form-1"
+                value={meta_description}
+                onChange={(e) => setMetaDescription(e.target.value)}
                 className="w-full"
                 placeholder="Input text"
               />

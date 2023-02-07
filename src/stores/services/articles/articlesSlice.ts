@@ -34,7 +34,7 @@ export const extendedApiSlice = api.injectEndpoints({
       },
     }),
     updateArticle: builder.mutation({
-      query: ({formData, id}) => {
+      query: ({ formData, id }) => {
         return {
           url: `api/articles/${id}`,
           method: "PUT",
@@ -42,7 +42,10 @@ export const extendedApiSlice = api.injectEndpoints({
         };
       },
       invalidatesTags: (result: any, error: any) => {
-        return [{ type: "Articles", id: result.data.id},{ type: "Articles", id: "LIST" }];
+        return [
+          { type: "Articles", id: result.data.id },
+          { type: "Articles", id: "LIST" },
+        ];
       },
     }),
     addArticle: builder.mutation({
@@ -59,7 +62,7 @@ export const extendedApiSlice = api.injectEndpoints({
     }),
     deleteArticle: builder.mutation({
       query: ({ id }: any) => {
-        console.log(id)
+        console.log(id);
         return {
           url: `api/articles/${id}`,
           method: "DELETE",
@@ -68,7 +71,7 @@ export const extendedApiSlice = api.injectEndpoints({
       invalidatesTags: (result: any, error: any) => {
         return [{ type: "Articles", id: "LIST" }];
       },
-    })
+    }),
   }),
 });
 

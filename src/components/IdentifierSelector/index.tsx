@@ -19,7 +19,6 @@ function Main({
   selectedIdentifier: any;
 }) {
 
-
   const { data, isLoading } = useGetIdentifiersQuery({
     pageStart: 0,
     pageLimit: -1,

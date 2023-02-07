@@ -7,7 +7,7 @@ import Pagination from "../../base-components/Pagination";
 import { FormInput, FormSelect } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import Notification from "../../base-components/Notification";
-import { Link } from "react-router-dom";
+import { Link, useHref } from "react-router-dom";
 //Need to reimplment
 import Tippy from "../../base-components/Tippy";
 import pluralize from "pluralize";
@@ -31,8 +31,6 @@ function Main({
   const [pageLimit, setPageLimit] = useState(10);
   const [deleteName, setDeleteName] = useState("");
   const idRef = useRef(null);
-
-
   const { page, currentPages, handlePageChange, paginationIsLoading, data } = usePagination(pageLimit, useGetIdentifiersQuery, {content: content, identifier: identifier});
   
   const [
@@ -160,10 +158,11 @@ function Main({
                     <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <a
                         className="flex items-center mr-3 text-slate-500"
-                        href="#"
+                        href={`https://firesidecandles.co.nz/${content}/${identifier}/${item.attributes.slug}`}
+                        target="_blank"
                       >
                         <Lucide icon="ExternalLink" className="w-4 h-4 mr-2" />
-                        /{content}/{identifier}/{item.attributes.name}
+                        firesidecandles.co.nz/{content}/{identifier}/{item.attributes.slug}
                       </a>
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">

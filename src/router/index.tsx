@@ -102,9 +102,8 @@ function Router() {
         },
         {
           path: "products/new",
-          element: <ProductAdd />,
+          element: <ProductAdd content="product" identifiers={["categories", "tags"]}/>,
         },
-        
         {
           path: "products",
           element: <Products content="products"/>,
